@@ -15,7 +15,7 @@ import java.util.Set;
  * @author w3
  * Ctrl Alt Down Arrow duplicates currently line
  */
-
+ 
 public class Main {
     // Define a static logger variable so that it references the
     // Logger instance named "Main".
@@ -199,14 +199,7 @@ public class Main {
 		System.out.println("DONE!");
 		//logger.trace("Exiting Run.");
 	}
-	
-	String[] custMenuText = {
-			"Apply to open an account.", 
-			"Apply to open a join account.",
-			"Withdraw from Account", 
-			"Deposit to Account",
-			"Transfer between Accounts",
-			"Quit"};
+
 	public int custMenu() throws Exception {
 		//logger.info("Enter Customer Menu.");
 		if(!currentUser.getType().equals(UserType.CUSTOMER)) {

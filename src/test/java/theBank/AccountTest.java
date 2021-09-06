@@ -6,6 +6,11 @@ import java.util.Set;
 
 import org.junit.Test;
 
+import theBank.Account;
+import theBank.AccountDao;
+import theBank.AccountDaoText;
+import theBank.AccountType;
+
 /**
  * AccountTest.java
  * @author w3

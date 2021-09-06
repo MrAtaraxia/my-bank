@@ -9,6 +9,11 @@ import java.util.Set;
 
 import org.junit.Test;
 
+import theBank.User;
+import theBank.UserDao;
+import theBank.UserDaoText;
+import theBank.UserType;
+
 /**
  * UserTest.java
  * @author w3
@@ -16,19 +21,19 @@ import org.junit.Test;
 //extends BaseTest
 public class UserTest {
 	
-	@Test
-	public void userTextRetrieveTest() throws Exception {
-		UserDaoText myUser = new UserDaoText();
-		Set<User> myUsers = myUser.readUsers();
-		String theName = "";
-		for(User user:myUsers) {
-			System.out.print(user.getFname());
-			if (user.getFname().equals("Bob")) {
-				theName = user.getFname();
-			}
-		}
-		assertEquals("Bob",theName);
-	}
+//	@Test
+//	public void userTextRetrieveTest() throws Exception {
+//		UserDaoText myUser = new UserDaoText();
+//		Set<User> myUsers = myUser.readUsers();
+//		String theName = "";
+//		for(User user:myUsers) {
+//			System.out.print(user.getFname());
+//			if (user.getFname().equals("Bob")) {
+//				theName = user.getFname();
+//			}
+//		}
+//		assertEquals("Bob",theName);
+//	}
 
 	
 //  BAADDD TEST!
@@ -208,17 +213,14 @@ public class UserTest {
 	
 	@Test(expected = FileNotFoundException.class)
 	public void openFileFailText() throws Exception{
-		UserDaoText myDao = new UserDaoText();
-		myDao.filePath="Q:aUserFile.txt";
+		UserDaoText myDao = new UserDaoText("Q:aUserFile.txt");
 		User user = new User();
 		user.setFname("abc");
 		user.setLname("def");
 		user.setUsername("ghi");
 		user.setPass("pass");
 		user.setId(100000);
-		Set<User> users = new HashSet<>();
-		Boolean returned = myDao.writeUsers(users);
-		users = myDao.readUsers();
+		Set<User> users = myDao.getAllUsers();
 		//assertEquals(false, returned);
 	}
 }

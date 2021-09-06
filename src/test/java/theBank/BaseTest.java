@@ -11,6 +11,11 @@ import java.util.Set;
 import org.junit.After;
 import org.junit.Before;
 
+import theBank.Account;
+import theBank.Main;
+import theBank.User;
+import theBank.UserType;
+
 /**
  * BaseTest.java
  * @author w3

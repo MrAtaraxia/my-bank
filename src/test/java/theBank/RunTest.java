@@ -7,6 +7,11 @@ import java.util.Set;
 
 import org.junit.Test;
 
+import theBank.Account;
+import theBank.Main;
+import theBank.User;
+import theBank.UserType;
+
 /**
  * RunTest.java
  * @author w3
@@ -17,10 +22,12 @@ public class RunTest extends BaseTest{
 	// isTestWorking #######################
 	@Test
 	public void isTestWorkingTestOutput() throws Exception {
+		
 		final String[] testInput = {"iTW1", "iTW2", "iTW3"};
 		InputStream localStream = makeStream(testInput);
 		Main aMain = new Main();
 		aMain.aScanner = new Scanner(localStream);
+		makeUsers();
 		String testParam = "Hi";
 		int testReturn = 5;
 		int returned = aMain.isTestWorking(testParam);

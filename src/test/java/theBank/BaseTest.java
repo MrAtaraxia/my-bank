@@ -10,11 +10,7 @@ import java.util.Set;
 
 import org.junit.After;
 import org.junit.Before;
-
-import theBank.Account;
-import theBank.Main;
-import theBank.User;
-import theBank.UserType;
+import org.junit.BeforeClass;
 
 /**
  * BaseTest.java
@@ -33,7 +29,7 @@ public abstract class BaseTest {
 	protected static ByteArrayInputStream testIn;
 	protected final ByteArrayOutputStream testOut = new ByteArrayOutputStream();
 	protected final ByteArrayOutputStream testErr = new ByteArrayOutputStream();
-	protected Main myMain = null;
+	public static Main myMain = null;
 	String runStart = "";
 	String loginScreen = "";
 	
@@ -43,7 +39,6 @@ public abstract class BaseTest {
 	@Before
 	public void setUp() throws Exception 
 	{
-		myMain = new Main();
 		runStart = myMain.clearScreen + 
 				myMain.WELCOME_MESSAGE + 
 				myMain.spacingOnScreen + 
@@ -82,15 +77,83 @@ public abstract class BaseTest {
 		return lInStream;
 	}
 	
-	protected void makeUsers() throws Exception {
-		//myMain.aDao.
+	@BeforeClass
+	public static void makeUsers() throws Exception {
+		myMain = new Main();
+		User.nextId = 5;
+		Account.nextId = 5;
+		myMain.uDao = new UserDaoText("./data/usersTest.txt");
+		myMain.aDao = new AccountDaoText("./data/accountsTest.txt");
+		
+		for(User use:myMain.uDao.getAllUsers()) {
+			myMain.uDao.deleteUser(use.getId());
+		}
+		for(Account acc:myMain.aDao.getAllAccounts()) {
+			myMain.aDao.deleteAccount(acc.getId());
+		}
+		for(Account acca:myMain.aDao.getAllAccounts()) {
+			System.out.print(acca.getId()+" AP:");
+			System.out.print(acca.getApproved()+" EN:");
+			System.out.print(acca.getEnabled()+" BA:");
+			System.out.print(acca.getBalance()+" TY:");
+			System.out.print(acca.getType()+" OWN:");
+			if(acca.getOwners()!=null) {
+				for(int i:acca.getOwners()) {
+					System.out.print(i+" ");
+				}
+			}
+			else {
+				myMain.aDao.deleteAccount(acca.getId());
+			}
+			System.out.print("\n");
+		}
+		
+		for(User use:myMain.uDao.getAllUsers()) {
+			System.out.print(" ID:"+ use.getId());
+			System.out.print(" FN:"+ use.getFname());
+			System.out.print(" LN:"+ use.getLname());
+			System.out.print(" UN:"+ use.getUsername());
+			System.out.print(" PA:"+ use.getPass());
+			System.out.print(" EM:"+ use.getEmail());
+			System.out.print(" WI:"+ use.getWithdrawn());
+			System.out.print(" TY:"+ use.getType());
+			System.out.print("\n");
+		}
+		System.out.print("Before\n");
 		User bob = new User(111, "Bob", "person", "cUser", "cPassword", "realemail", UserType.CUSTOMER);
 		myMain.uDao.insertUser(bob);
+		myMain.uDao.updateUser(bob);
 		User u1 = new User(112, "Another", "Person", "eUser", "ePassword", "realemailagain", UserType.EMPLOYEE);
 		User u2 = new User(113, "Totally", "NotFake", "aUser", "aPassword", "another@email.com", UserType.ADMIN);
 		myMain.uDao.insertUser(u1);
+		myMain.uDao.updateUser(u1);
 		myMain.uDao.insertUser(u2);
+		myMain.uDao.updateUser(u2);
+		String[] f_names = {"Jen", "Bob", "Chris", "Dan", "Mary", "Sam", "Kate", "Barb"};
+		String[] l_names = {"Smith", "Place", "Person", "Again", "ABC", "DEF", "GHI", "JKL", "MNO", "PQR"};
 		int count = 0;
+		for(String fn:f_names) {
+			for(String ln:l_names) {
+				User aUser = new User();
+				aUser.setFname(fn);
+				aUser.setLname(ln);
+				aUser.setUsername(fn+ln);
+				aUser.setEmail(fn +ln+ "@gmail.com");
+				aUser.setPass("pass");
+				if(count%3==0) {
+					aUser.setType(UserType.CUSTOMER);
+				}
+				if(count%3==1) {
+					aUser.setType(UserType.ADMIN);
+				}
+				if(count%3==2) {
+					aUser.setType(UserType.EMPLOYEE);
+				}
+				myMain.uDao.insertUser(aUser);
+				count++;
+			}
+		}
+		count = 0;
 		Set<User> allUsers = myMain.uDao.getAllUsersByType(UserType.CUSTOMER);
 		for(User aUser:allUsers) {
 			Integer[] users = {aUser.getId()};
@@ -102,6 +165,35 @@ public abstract class BaseTest {
 			acc2.setBalance((double) 5000);
 			myMain.aDao.insertAccount(acc2);
 			count++;
+		}
+
+		for(Account acca:myMain.aDao.getAllAccounts()) {
+			System.out.print(acca.getId()+" AP:");
+			System.out.print(acca.getApproved()+" EN:");
+			System.out.print(acca.getEnabled()+" BA:");
+			System.out.print(acca.getBalance()+" TY:");
+			System.out.print(acca.getType()+" OWN:");
+			if(acca.getOwners()!=null) {
+				for(int i:acca.getOwners()) {
+					System.out.print(i+" ");
+				}
+			}
+			else {
+				myMain.aDao.deleteAccount(acca.getId());
+			}
+			System.out.print("\n");
+		}
+		
+		for(User use:myMain.uDao.getAllUsers()) {
+			System.out.print(" ID:"+ use.getId());
+			System.out.print(" FN:"+ use.getFname());
+			System.out.print(" LN:"+ use.getLname());
+			System.out.print(" UN:"+ use.getUsername());
+			System.out.print(" PA:"+ use.getPass());
+			System.out.print(" EM:"+ use.getEmail());
+			System.out.print(" WI:"+ use.getWithdrawn());
+			System.out.print(" TY:"+ use.getType());
+			System.out.print("\n");
 		}
 	}
 

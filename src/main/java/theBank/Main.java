@@ -54,8 +54,8 @@ public class Main {
 	String PRESS_ANY = 			"Press Any Key to Continue:";
 	int minLength = 5;
 	int maxLength = 50;
-	UserDao uDao = new UserDaoText();
-	AccountDao aDao = new AccountDaoText();
+	protected UserDao uDao = new UserDaoText();
+	protected AccountDao aDao = new AccountDaoText();
 	
 	
 	public Main() throws Exception {
@@ -73,13 +73,7 @@ public class Main {
 		
 		Account.nextId = nextAcc+1;
 		Set<User> allUsers = new HashSet<User>();
-//		User bob = new User(111, "Bob", "person", "cUser", "cPassword", "realemail", UserType.CUSTOMER);
-//		System.out.print(uDao.insertUser(bob));
-//		User u1 = new User(112, "Another", "Person", "eUser", "ePassword", "realemailagain", UserType.EMPLOYEE);
-//		User u2 = new User(113, "Totally", "NotFake", "aUser", "aPassword", "another@email.com", UserType.ADMIN);
-//		uDao.insertUser(u1);
-//		uDao.insertUser(u2);
-		
+
 		allUsers = uDao.getAllUsers();
 		int nextUser = 0;
 		for(User use: allUsers) {
@@ -87,37 +81,9 @@ public class Main {
 				nextUser = use.getId();
 			}
 		}
-		User.nextId = nextUser+1;
+//		User.nextId = nextUser+1;
+//		
 		
-		
-		for(Account acca:aDao.getAllAccounts()) {
-			System.out.print(acca.getId()+" AP:");
-			System.out.print(acca.getApproved()+" EN:");
-			System.out.print(acca.getEnabled()+" BA:");
-			System.out.print(acca.getBalance()+" TY:");
-			System.out.print(acca.getType()+" OWN:");
-			if(acca.getOwners()!=null) {
-				for(int i:acca.getOwners()) {
-					System.out.print(i+" ");
-				}
-			}
-			else {
-				aDao.deleteAccount(acca.getId());
-			}
-			System.out.print("\n");
-		}
-		
-		for(User use:uDao.getAllUsers()) {
-			System.out.print(" ID:"+ use.getId());
-			System.out.print(" FN:"+ use.getFname());
-			System.out.print(" LN:"+ use.getLname());
-			System.out.print(" UN:"+ use.getUsername());
-			System.out.print(" PA:"+ use.getPass());
-			System.out.print(" EM:"+ use.getEmail());
-			System.out.print(" WI:"+ use.getWithdrawn());
-			System.out.print(" TY:"+ use.getType());
-			System.out.print("\n");
-		}
 		System.out.print("NEXT U:" + User.nextId + "\n");
 		System.out.print("NEXT A:" + Account.nextId + "\n");
 		//User bob = new User(13, "aUser", "aPassword", 20, UserType.ADMIN);
@@ -270,10 +236,11 @@ public class Main {
 		theInput = aScanner.nextLine();
 		for(User aUser:uDao.getAllUsersByType(UserType.CUSTOMER)) {
 			if(theInput.equals(aUser.getId().toString())) {
+				System.out.print("USERID!"+aUser.getId());
 				if(!aUser.getId().equals(currentUser.getId())){
 					Set<Account> tempAccounts = aDao.getAccountsByUser(aUser.getId());
 					for(Account acc:tempAccounts) {
-						if(acc.getOwners()[1].equals(currentUser.getId())) {
+						if(acc.getOwners().length > 1 && acc.getOwners()[1].equals(currentUser.getId())) {
 							if(acc.getOwners()[0].equals(aUser.getId())) {
 								if(acc.getType()==AccountType.JOINT) {
 									if(acc.getEnabled()==true) {
@@ -298,6 +265,7 @@ public class Main {
 					tempAcc.setType(AccountType.JOINT);
 					tempAcc.setEnabled(false);
 					aDao.insertAccount(tempAcc);
+					System.out.print("SUCCESS\n");
 					System.out.print("Once the person whose UserID you typed, tries to open an account with your id.\n");
 					System.out.print("We will send it to our employees to approve and add it to your account.\n");
 					//logger.info("Applied to Open Joint Account.");
@@ -817,9 +785,12 @@ public class Main {
 					confirm = aScanner.nextLine();
 					if(confirm.equals(theInput)) {
 						uPass = theInput;
-						System.out.print(registerCustomerText[15] + uName + 
-								registerCustomerText[16] + uPass + 
-								registerCustomerText[17]);
+						User use = new User();
+						use.setFname("temp");
+						use.setLname("acc");
+						use.setUsername(uName);
+						use.setPass(uPass);
+						uDao.insertUser(use);
 						return 1;
 					}
 

@@ -13,7 +13,15 @@ public class AccountDaoText implements AccountDao {
 
 
 	public String filePath = "./data/accounts.txt";
-
+	
+	AccountDaoText(String filePath){
+		this.filePath = filePath;
+	}
+	
+	AccountDaoText(){
+		
+	}
+	
 	@SuppressWarnings({ "unchecked", "resource" })
 	private Set<Account> readAccounts() throws Exception {
         Set<Account> returnThis = new HashSet<Account>();
@@ -26,7 +34,7 @@ public class AccountDaoText implements AccountDao {
         return returnThis;
     }
 
-    private Boolean writeAccounts(Set<Account> input) {
+    protected Boolean writeAccounts(Set<Account> input) {
         try {
             FileOutputStream fos = new FileOutputStream(filePath);
             ObjectOutputStream out = new ObjectOutputStream(fos);

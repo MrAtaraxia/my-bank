@@ -162,20 +162,7 @@ public class UserTest {
 		newUser.setType(UserType.EMPLOYEE);
 		newUser.setEmail("eee@gmail.com");
 		UserDaoText uDao = new UserDaoText();
-		String[] fnames = {"Bob", "Chris", "Jen", "Mary"};
-		String[] lname = {"Smith", "Place", "Person", "Again"};
-		for(String fn:fnames) {
-			for(String ln:lname) {
-				User aUser = new User();
-				aUser.setFname(fn);
-				aUser.setLname(ln);
-				aUser.setUsername(fn+ln);
-				aUser.setEmail(fn +ln+ "@gmail.com");
-				aUser.setPass("pass");
-				aUser.setType(UserType.CUSTOMER);
-				uDao.insertUser(aUser);
-			}
-		}
+
 		uDao.insertUser(user);
 		uDao.insertUser(newUser);
 		Boolean works = uDao.insertUser(user);

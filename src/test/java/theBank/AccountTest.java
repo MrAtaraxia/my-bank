@@ -45,9 +45,6 @@ public class AccountTest{
 	@Test//(expected = ArrayIndexOutOfBoundsException.class)
 	public void createAccountsTypeTest() throws Exception {
 		AccountDaoText aDao = new AccountDaoText();
-		//UserDao uDao = new UserDaoText();
-		//Set<User> theUsers = uDao.getAllUsers();
-		//for(User aUser:theUsers) {
 		Account aAccount = new Account();
 		Set<Account> sAcc = null;
 		sAcc = aDao.getAllAccounts();

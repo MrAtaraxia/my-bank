@@ -131,7 +131,7 @@ public class UserDaoText implements UserDao{
 		Set<User> allUsers = readUsers();
 		Set<User> toReturn = null;
 		for(User aUser:allUsers) {
-			if(aUser.getType().equals(type)) {
+			if(aUser.getType() == type) {
 				if(toReturn==null) {
 					toReturn=new HashSet<>();
 				}
@@ -163,12 +163,18 @@ public class UserDaoText implements UserDao{
 				user.getLname().equals(null)) {
 			return false;
 		}
-		Set<User> allUsers = readUsers();
-		for(User aUser :allUsers) {
-			if(aUser.getId().equals(user.getId())) {
-				return false;
+		Set<User> allUsers = null;
+		try {
+			allUsers = readUsers();
+			for(User aUser :allUsers) {
+				if(aUser.getId().equals(user.getId())) {
+					return false;
+				}
 			}
+		}catch(Exception e) {
+			allUsers = new HashSet<User>();
 		}
+		
 		allUsers.add(user);
 		if(writeUsers(allUsers)) {
 			return true;

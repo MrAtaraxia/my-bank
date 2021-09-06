@@ -9,11 +9,6 @@ import java.util.Set;
 
 import org.junit.Test;
 
-import theBank.Account;
-import theBank.Main;
-import theBank.User;
-import theBank.UserType;
-
 /**
  * RunTest.java
  * @author w3
@@ -74,7 +69,6 @@ public class RunTest extends BaseTest{
 		Main aMain = myMain;
 		Account a1 = null;
 		Account a2 = null;
-		int count = 0;
 		for(Account acc:aMain.aDao.getAllActiveAccounts()) {
 			if(acc.getBalance() > 100) {
 				if(a1==null) {
@@ -92,7 +86,7 @@ public class RunTest extends BaseTest{
 				"-5", "100000", "39", "1"};
 		InputStream localStream = makeStream(testInput);
 		aMain.currentUser = aMain.uDao.getUser(113);
-		Account acco = aMain.aDao.getAccount(1);
+		aMain.aDao.getAccount(1);
 		
 		aMain.aScanner = new Scanner(localStream);
 		aMain.transferBetweenAccounts();
@@ -209,14 +203,11 @@ public class RunTest extends BaseTest{
 	public void viewCustPersonalInfoTestOutput() throws Exception {
 		Main aMain = myMain;
 		User tempUser = null;
-		Account tempAcc = null;
 		for(User use:aMain.uDao.getAllUsersByType(UserType.CUSTOMER)) {
 			tempUser = use;
 			break;
 		}
-		for(Account acc:aMain.aDao.getAllNeedApprovalAccounts()) {
-			tempAcc = acc;
-		}
+
 		final String[] testInput = {tempUser.getId().toString()};
 		InputStream localStream = makeStream(testInput);
 		aMain.aScanner = new Scanner(localStream);
@@ -350,7 +341,6 @@ public class RunTest extends BaseTest{
 		aMain.cancelAccount();
 		aMain.aScanner.close();
 		String theOutput = getOutput();
-		String expectedEnd = "\n";
 		System.setOut(systemOut);
 		System.out.print("cancelAccount1Test");
 		System.out.print(theOutput);
@@ -585,8 +575,6 @@ public class RunTest extends BaseTest{
 		Main aMain = myMain;
 		User tempUser = null;
 		Account a1 = null;
-		Account a2 = null;
-		int count = 0;
 		for(User use:aMain.uDao.getAllUsersByType(UserType.CUSTOMER)) {
 			tempUser = use;
 			if(aMain.aDao.getActiveAccountsByUser(tempUser.getId())==null) {

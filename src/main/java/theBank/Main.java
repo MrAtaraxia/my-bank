@@ -4,11 +4,15 @@ import java.util.HashSet;
 import java.util.Scanner;
 import java.util.Set;
 
-//import org.apache.logging.log4j.Logger;
-//import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
-
-
+//public class MyClass{
+//private static final Logger logger = LogManager.getLogger(MyClass.class);
+//	public static void main(String[] args)
+//		logger.info("Insert your log message here.");
+//	}
+//}
 
 /**
  * Main.java
@@ -19,7 +23,7 @@ import java.util.Set;
 public class Main {
     // Define a static logger variable so that it references the
     // Logger instance named "Main".
-	//private static final Logger logger = LogManager.getLogger(Main.class);
+	private static final Logger logger = LogManager.getLogger(Main.class);
 	
 	public double allowed_per_day = 10000.0d;
 	public  String clearScreen = "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n";
@@ -59,7 +63,7 @@ public class Main {
 	
 	
 	public Main() throws Exception {
-		//logger.trace("Constructor() start.");
+		logger.trace("Constructor() start.");
 		
 		Set <Account> allAccounts= null;
 		allAccounts = aDao.getAllAccounts();
@@ -121,7 +125,7 @@ public class Main {
 	}
 
 	public void run() throws Exception {
-		//logger.trace("Entering run.");
+		logger.trace("Entering run.");
 		splashScreen();
 		String choice;
 		boolean running = true;
@@ -163,7 +167,7 @@ public class Main {
 			}
 		}
 		System.out.println("DONE!");
-		//logger.trace("Exiting Run.");
+		logger.trace("Exiting Run.");
 	}
 
 	public int custMenu() throws Exception {
@@ -213,6 +217,7 @@ public class Main {
 		try {
 			if(aDao.insertAccount(tempAcc))
 			{
+				logger.info("User:" + currentUser.getId().toString() + " - Applied to open an account.");
 				System.out.print("You have been added to the list of users who want to add new accounts.\n");
 				System.out.print("When an employee approves of your new account\nit will be added to your list of accounts.\n");
 				System.out.print("Thank you for applying for wanting to create a new account.\n");
@@ -234,6 +239,7 @@ public class Main {
 		System.out.print("Please type in the UserID of the person you want to open the account with.\n");
 		System.out.print("Input > ");
 		theInput = aScanner.nextLine();
+		logger.info("User:" + currentUser.getId().toString() + " - Applied to open a joint account with:" + theInput);
 		for(User aUser:uDao.getAllUsersByType(UserType.CUSTOMER)) {
 			if(theInput.equals(aUser.getId().toString())) {
 				System.out.print("USERID!"+aUser.getId());
@@ -324,8 +330,11 @@ public class Main {
 				}
 				else {
 					System.out.print("You have withdrawn " + wAmount + " from account " + tempAccount.getId() + "\n");
+					logger.info("Acc:" + tempAccount.getId() + " old balance " + tempAccount.getBalance());
 					tempAccount.setBalance(tempAccount.getBalance()-wAmount);
 					aDao.updateAccount(tempAccount);
+					logger.info("User:" + currentUser.getId().toString() + " - withdrew " + wAmount + " from " + tempAccount.getId());
+					logger.info("Acc:" + tempAccount.getId() + " new balance " + tempAccount.getBalance());
 					System.out.print("Account " + tempAccount.getId() + " has a new balance of " + tempAccount.getBalance() + "\n");
 					break;
 				}
@@ -365,8 +374,11 @@ public class Main {
 				}
 				else {
 					System.out.print("You have deposited " + wAmount + " to account " + tempAccount.getId() + "\n");
+					logger.info("Acc:" + tempAccount.getId() + " old balance " + tempAccount.getBalance());
 					tempAccount.setBalance(tempAccount.getBalance()+wAmount);
 					aDao.updateAccount(tempAccount);
+					logger.info("User:" + currentUser.getId().toString() + "-deposited-" + wAmount + "-into-" + tempAccount.getId());
+					logger.info("Acc:" + tempAccount.getId() + " new balance " + tempAccount.getBalance());
 					System.out.print("Account " + tempAccount.getId() + " has a new balance of " + tempAccount.getBalance() + "\n");
 					break;
 				}
@@ -414,10 +426,15 @@ public class Main {
 					}
 					else {
 						System.out.print("You have transfered " + wAmount + " from account " + fromAcc.getId() + " to account " + toAcc.getId() +"\n");
+						logger.info("Acc:" + fromAcc.getId() + " old balance " + fromAcc.getBalance());
+						logger.info("Acc:" + toAcc.getId() + " old balance " + toAcc.getBalance());
 						fromAcc.setBalance(fromAcc.getBalance()-wAmount);
 						toAcc.setBalance(toAcc.getBalance()+wAmount);
 						aDao.updateAccount(fromAcc);
 						aDao.updateAccount(toAcc);
+						logger.info("User:" + currentUser.getId().toString() + "-transfered-" + wAmount + "-from-" + fromAcc.getId()+ "-to-" + toAcc.getId());
+						logger.info("Acc:" + fromAcc.getId() + " new balance " + fromAcc.getBalance());
+						logger.info("Acc:" + toAcc.getId() + " new balance " + toAcc.getBalance());
 						System.out.print("Account " + fromAcc.getId() + " has a new balance of " + fromAcc.getBalance() + "\n");
 						System.out.print("Account " + toAcc.getId() + " has a new balance of " + toAcc.getBalance() + "\n");
 						break;
@@ -791,6 +808,7 @@ public class Main {
 						use.setUsername(uName);
 						use.setPass(uPass);
 						uDao.insertUser(use);
+						logger.info("User:" + currentUser.getUsername() + " - Registered a user.");
 						return 1;
 					}
 

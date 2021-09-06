@@ -3,16 +3,9 @@ package theBank;
 import static org.junit.Assert.*;
 
 import java.io.FileNotFoundException;
-//import java.sql.SQLIntegrityConstraintViolationException;
-import java.util.HashSet;
 import java.util.Set;
 
 import org.junit.Test;
-
-import theBank.User;
-import theBank.UserDao;
-import theBank.UserDaoText;
-import theBank.UserType;
 
 /**
  * UserTest.java

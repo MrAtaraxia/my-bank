@@ -1,24 +1,27 @@
 package theBank;
 
 import java.io.Serializable;
+//import java.security.InvalidAlgorithmParameterException;
+//import java.security.InvalidKeyException;
+//import java.security.NoSuchAlgorithmException;
+//
+//import javax.crypto.BadPaddingException;
+//import javax.crypto.IllegalBlockSizeException;
+//import javax.crypto.NoSuchPaddingException;
+//import javax.crypto.SecretKey;
+//import javax.crypto.spec.IvParameterSpec;
 
-//import org.apache.logging.log4j.Logger;
-//import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 /**
  * User Class
  * @author w3
  */
 
-public class User implements Serializable{
-	//private static final Logger logger = LogManager.getLogger(User.class);
-	/**
-	 * 
-	 */
-	//static final long serialVersionUID = 1L;
-	/**
-	 * 
-	 */
+public class User implements Serializable {
+	private static final Logger logger = LogManager.getLogger(User.class);
+
 	protected static Integer nextId = 20;
 	private static final long serialVersionUID = -2698235604427808725L;
 	private Integer id;
@@ -26,9 +29,11 @@ public class User implements Serializable{
     private String lname;
     private String username;
     private String pass;
+    //private String encryptedPass;
     private String email;
     private UserType type;
     private double withdrawn;
+    
     
 
     public User(Integer id, String fname, String lname, 
@@ -93,11 +98,36 @@ public class User implements Serializable{
 
 
     public String getPass() {
-        return pass;
+//    	String algorithm = "AES/CBC/PKCS5Padding";
+//    	SecretKey myKey = Encryption.generateKey(100);
+//    	IvParameterSpec ivParameterSpec = Encryption.generateIv();
+//    	if(this.encryptedPass!=null) {
+//	    	String unEncrypted = null;
+//	        try {
+//				 unEncrypted = Encryption.decrypt(algorithm, this.encryptedPass, myKey, ivParameterSpec);
+//			} catch (InvalidKeyException | NoSuchPaddingException | NoSuchAlgorithmException
+//					| InvalidAlgorithmParameterException | BadPaddingException | IllegalBlockSizeException e) {
+//				e.printStackTrace();
+//			}
+//	        	System.out.print("Unencrypted:" + unEncrypted + ":Pass:" + pass + "\n");
+//	        	logger.info("Encrypted:"+this.encryptedPass+"-Unencrypted:" + unEncrypted + "-Pass:" + pass + "\n");
+//    	}
+        	return pass;
     }
 
     public void setPass(String pass) {
+//    	String algorithm = "AES/CBC/PKCS5Padding";
+//    	SecretKey myKey = Encryption.generateKey(100);
+//    	IvParameterSpec ivParameterSpec = Encryption.generateIv();
         this.pass = pass;
+//		try {
+//			this.encryptedPass = Encryption.encrypt(algorithm, pass, myKey, ivParameterSpec);
+//			logger.info("Encrypted:"+this.encryptedPass+ "-Pass:" + pass + "\n");
+//		} catch (InvalidKeyException | NoSuchPaddingException | NoSuchAlgorithmException
+//				| InvalidAlgorithmParameterException | BadPaddingException | IllegalBlockSizeException e) {
+//			e.printStackTrace();
+//		}
+		
     }
 
 	

@@ -27,9 +27,13 @@ public class AccountDaoText implements AccountDao {
         Set<Account> returnThis = new HashSet<Account>();
 
         FileInputStream fis = new FileInputStream(filePath);
+        try {
 		ObjectInputStream in = new ObjectInputStream(fis);
-
         returnThis = (Set<Account>) in.readObject();
+        }
+        catch(Exception e) {
+        	
+        }
 
         return returnThis;
     }

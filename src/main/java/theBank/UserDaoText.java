@@ -70,9 +70,14 @@ public class UserDaoText implements UserDao{
         Set<User> returnThis = new HashSet<User>();
 
         FileInputStream fis = new FileInputStream(filePath);
-		ObjectInputStream in = new ObjectInputStream(fis);
+		try{
+			ObjectInputStream in = new ObjectInputStream(fis);
+			returnThis = (Set<User>) in.readObject();
+		}catch(Exception e) {
+			
+		}
 
-        returnThis = (Set<User>) in.readObject();
+        
 		//logger.trace("readUsers returning");
 
         return returnThis;

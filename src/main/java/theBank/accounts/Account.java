@@ -1,10 +1,12 @@
-package theBank;
+package theBank.accounts;
 
 import java.io.Serializable;
 
+import theBank.users.UType;
+
 public class Account implements Serializable{
 	
-	protected static Integer nextId = 1;
+	public static Integer nextId = 1;
 	/**
 	 * 
 	 */
@@ -14,19 +16,19 @@ public class Account implements Serializable{
 	private Integer[] owners;
 	private Boolean enabled;
 	private Boolean approved;
-	private AccountType type;
+	private AType type;
 	
-	Account(){
+	public Account(){
 		this.id = nextId;
 		this.balance = 0.0d;
 		this.enabled = true;
 		this.approved = false;
-		this.type = AccountType.INDIVIDUAL;
+		this.type = AType.INDIVIDUAL;
 		nextId++;
 		
 	}
 	
-	Account(Integer id, Integer[] owners, AccountType type){
+	Account(Integer id, Integer[] owners, AType type){
 		this.id = id;
 		this.owners = owners;
 		this.balance = 0.0d;
@@ -75,17 +77,17 @@ public class Account implements Serializable{
 		return approved;
 	}
 
-	public void setApproved(Boolean approved, UserType utype) {
-		if(utype == UserType.EMPLOYEE || utype == UserType.ADMIN) {
+	public void setApproved(Boolean approved, UType utype) {
+		if(utype == UType.EMPLOYEE || utype == UType.ADMIN) {
 			this.approved = approved;
 		}
 	}
 
-	public AccountType getType() {
+	public AType getType() {
 		return type;
 	}
 
-	public void setType(AccountType type) {
+	public void setType(AType type) {
 		this.type = type;
 	}
 

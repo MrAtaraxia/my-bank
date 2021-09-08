@@ -1,4 +1,4 @@
-package theBank;
+package theBank.users;
 
 import java.io.Serializable;
 //import java.security.InvalidAlgorithmParameterException;
@@ -12,6 +12,9 @@ import java.io.Serializable;
 //import javax.crypto.spec.IvParameterSpec;
 
 import org.apache.logging.log4j.Logger;
+
+import theBank.general.*;
+
 import org.apache.logging.log4j.LogManager;
 
 /**
@@ -22,7 +25,7 @@ import org.apache.logging.log4j.LogManager;
 public class User implements Serializable {
 	private static final Logger logger = LogManager.getLogger(User.class);
 
-	protected static Integer nextId = 20;
+	public static Integer nextId = 20;
 	private static final long serialVersionUID = -2698235604427808725L;
 	private Integer id;
     private String fname;
@@ -31,13 +34,14 @@ public class User implements Serializable {
     private String pass;
     //private String encryptedPass;
     private String email;
-    private UserType type;
+    private UType type;
     private double withdrawn;
+    private Address address;
     
     
 
     public User(Integer id, String fname, String lname, 
-    		String username, String pass, String email, UserType type) {
+    		String username, String pass, String email, UType type) {
     	//logger.info("User param constructor.");
     	this.id = id;
     	this.fname = fname;
@@ -112,7 +116,7 @@ public class User implements Serializable {
 //	        	System.out.print("Unencrypted:" + unEncrypted + ":Pass:" + pass + "\n");
 //	        	logger.info("Encrypted:"+this.encryptedPass+"-Unencrypted:" + unEncrypted + "-Pass:" + pass + "\n");
 //    	}
-        	return pass;
+        return pass;
     }
 
     public void setPass(String pass) {
@@ -140,12 +144,12 @@ public class User implements Serializable {
 	}
 
 	
-	public UserType getType() {
+	public UType getType() {
 		//logger.trace("User getType.");
 		return type;
 	}
 
-	public void setType(UserType type) {
+	public void setType(UType type) {
 		//logger.trace("User setType.");
 		this.type = type;
 	}
@@ -156,6 +160,14 @@ public class User implements Serializable {
 
 	public void setWithdrawn(double withdrawn) {
 		this.withdrawn = withdrawn;
+	}
+
+	public Address getAddress() {
+		return address;
+	}
+
+	public void setAddress(Address address) {
+		this.address = address;
 	}
 
 }

@@ -1,12 +1,12 @@
-package theBank;
+package theBank.users;
 
-public enum UserType {
+public enum UType {
 	NONE(0),
 	CUSTOMER(1),
 	EMPLOYEE(2),
 	ADMIN(3);
 	private final int value;
-	private UserType(int value) {
+	private UType(int value) {
 		this.value = value;
 	}
 	

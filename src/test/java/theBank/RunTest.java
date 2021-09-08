@@ -9,6 +9,10 @@ import java.util.Set;
 
 import org.junit.Test;
 
+import theBank.accounts.Account;
+import theBank.users.User;
+import theBank.users.UType;
+
 /**
  * RunTest.java
  * @author w3
@@ -125,7 +129,7 @@ public class RunTest extends BaseTest{
 		
 
 		Main aMain = myMain;
-		Set<User> theUsers = aMain.uDao.getAllUsersByType(UserType.CUSTOMER);
+		Set<User> theUsers = aMain.uDao.getAllUsersByType(UType.CUSTOMER);
 		List<User> uList = new ArrayList<>();
 		for(User use:theUsers) {
 			uList.add(use);
@@ -167,7 +171,7 @@ public class RunTest extends BaseTest{
 		Main aMain = myMain;
 		String[] testInput = {""};
 		User theUser = null;
-		for (User aUser:aMain.uDao.getAllUsersByType(UserType.CUSTOMER)) {
+		for (User aUser:aMain.uDao.getAllUsersByType(UType.CUSTOMER)) {
 			if(aMain.aDao.getActiveAccountsByUser(aUser.getId())==null) {
 				continue;
 			}
@@ -203,7 +207,7 @@ public class RunTest extends BaseTest{
 	public void viewCustPersonalInfoTestOutput() throws Exception {
 		Main aMain = myMain;
 		User tempUser = null;
-		for(User use:aMain.uDao.getAllUsersByType(UserType.CUSTOMER)) {
+		for(User use:aMain.uDao.getAllUsersByType(UType.CUSTOMER)) {
 			tempUser = use;
 			break;
 		}
@@ -255,7 +259,7 @@ public class RunTest extends BaseTest{
 		aMain.currentUser.setId(100);
 		aMain.currentUser.setFname("First");
 		aMain.currentUser.setLname("Last");
-		aMain.currentUser.setType(UserType.EMPLOYEE);
+		aMain.currentUser.setType(UType.EMPLOYEE);
 		aMain.aScanner = new Scanner(localStream);
 		aMain.depositToAccount();
 		aMain.aScanner.close();
@@ -279,7 +283,7 @@ public class RunTest extends BaseTest{
 		aMain.currentUser.setId(100);
 		aMain.currentUser.setFname("First");
 		aMain.currentUser.setLname("Last");
-		aMain.currentUser.setType(UserType.ADMIN);
+		aMain.currentUser.setType(UType.ADMIN);
 		aMain.aScanner = new Scanner(localStream);
 		aMain.depositToAccount();
 		aMain.aScanner.close();
@@ -303,7 +307,7 @@ public class RunTest extends BaseTest{
 		aMain.currentUser.setId(100);
 		aMain.currentUser.setFname("First");
 		aMain.currentUser.setLname("Last");
-		aMain.currentUser.setType(UserType.ADMIN);
+		aMain.currentUser.setType(UType.ADMIN);
 		Set<Account> accounts = aMain.aDao.getAccountsByUser(100);
 		Account anAccount = null;
 		for(Account acc:accounts) {
@@ -336,7 +340,7 @@ public class RunTest extends BaseTest{
 		aMain.currentUser.setId(100);
 		aMain.currentUser.setFname("First");
 		aMain.currentUser.setLname("Last");
-		aMain.currentUser.setType(UserType.EMPLOYEE);
+		aMain.currentUser.setType(UType.EMPLOYEE);
 		aMain.aScanner = new Scanner(localStream);
 		aMain.cancelAccount();
 		aMain.aScanner.close();
@@ -357,7 +361,7 @@ public class RunTest extends BaseTest{
 		aMain.currentUser.setId(100);
 		aMain.currentUser.setFname("First");
 		aMain.currentUser.setLname("Last");
-		aMain.currentUser.setType(UserType.ADMIN);
+		aMain.currentUser.setType(UType.ADMIN);
 		Set<Account> accounts = aMain.aDao.getAccountsByUser(100);
 		Account anAccount = null;
 		for(Account acc:accounts) {
@@ -540,7 +544,7 @@ public class RunTest extends BaseTest{
 		Main aMain = myMain;
 		User tempUser = null;
 		Account tempAcc = null;
-		for(User use:aMain.uDao.getAllUsersByType(UserType.CUSTOMER)) {
+		for(User use:aMain.uDao.getAllUsersByType(UType.CUSTOMER)) {
 			tempUser = use;
 			break;
 		}
@@ -555,7 +559,7 @@ public class RunTest extends BaseTest{
 				"3",};
 		InputStream localStream = makeStream(testInput);
 		aMain.currentUser = new User();
-		aMain.currentUser.setType(UserType.EMPLOYEE);
+		aMain.currentUser.setType(UType.EMPLOYEE);
 		aMain.aScanner = new Scanner(localStream);
 		aMain.employMenu();
 		aMain.aScanner.close();
@@ -575,7 +579,7 @@ public class RunTest extends BaseTest{
 		Main aMain = myMain;
 		User tempUser = null;
 		Account a1 = null;
-		for(User use:aMain.uDao.getAllUsersByType(UserType.CUSTOMER)) {
+		for(User use:aMain.uDao.getAllUsersByType(UType.CUSTOMER)) {
 			tempUser = use;
 			if(aMain.aDao.getActiveAccountsByUser(tempUser.getId())==null) {
 				continue;
@@ -618,7 +622,7 @@ public class RunTest extends BaseTest{
 
 		Main aMain = myMain;
 		String[] testInput = {""};
-		Set<User> theUsers = aMain.uDao.getAllUsersByType(UserType.CUSTOMER);
+		Set<User> theUsers = aMain.uDao.getAllUsersByType(UType.CUSTOMER);
 		for(User use:theUsers) {
 			for(Account acc:aMain.aDao.getAccountsByUser(use.getId())) {
 				if(acc.getApproved()&&acc.getEnabled()) {

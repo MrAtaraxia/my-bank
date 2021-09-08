@@ -5,6 +5,11 @@ import java.util.Scanner;
 import java.util.Set;
 
 import org.apache.logging.log4j.Logger;
+
+import theBank.accounts.*;
+import theBank.users.*;
+import theBank.DAO.*;
+
 import org.apache.logging.log4j.LogManager;
 
 //public class MyClass{
@@ -30,7 +35,7 @@ public class Main {
 	public  String spacingOnScreen = "\n\n\n\n\n\n\n\n";
 
 	User currentUser = null;
-	UserType typeOfUser = UserType.NONE;
+	UType typeOfUser = UType.NONE;
 	public Scanner aScanner = null;
 	
 	Menu[] loginMenu = null;
@@ -172,7 +177,7 @@ public class Main {
 
 	public int custMenu() throws Exception {
 		//logger.info("Enter Customer Menu.");
-		if(!currentUser.getType().equals(UserType.CUSTOMER)) {
+		if(!currentUser.getType().equals(UType.CUSTOMER)) {
 			//logger.warn("THIS SHOULD NOT HAPPEN!");
 			return -1;
 		}
@@ -212,7 +217,7 @@ public class Main {
 		//System.out.print(custMenuChoicesText[0]);
 		Account tempAcc = new Account();
 		Integer[] owners = {currentUser.getId()};
-		tempAcc.setType(AccountType.INDIVIDUAL);
+		tempAcc.setType(AType.INDIVIDUAL);
 		tempAcc.setOwners(owners);
 		try {
 			if(aDao.insertAccount(tempAcc))
@@ -240,7 +245,7 @@ public class Main {
 		System.out.print("Input > ");
 		theInput = aScanner.nextLine();
 		logger.info("User:" + currentUser.getId().toString() + " - Applied to open a joint account with:" + theInput);
-		for(User aUser:uDao.getAllUsersByType(UserType.CUSTOMER)) {
+		for(User aUser:uDao.getAllUsersByType(UType.CUSTOMER)) {
 			if(theInput.equals(aUser.getId().toString())) {
 				System.out.print("USERID!"+aUser.getId());
 				if(!aUser.getId().equals(currentUser.getId())){
@@ -248,7 +253,7 @@ public class Main {
 					for(Account acc:tempAccounts) {
 						if(acc.getOwners().length > 1 && acc.getOwners()[1].equals(currentUser.getId())) {
 							if(acc.getOwners()[0].equals(aUser.getId())) {
-								if(acc.getType()==AccountType.JOINT) {
+								if(acc.getType()==AType.JOINT) {
 									if(acc.getEnabled()==true) {
 										System.out.print("You already have a joint account with that user!\n");
 										//logger.info("Already have a Joint Account.");
@@ -268,7 +273,7 @@ public class Main {
 					Integer[] tempInt = {currentUser.getId(), aUser.getId()};
 					Account tempAcc = new Account();
 					tempAcc.setOwners(tempInt);
-					tempAcc.setType(AccountType.JOINT);
+					tempAcc.setType(AType.JOINT);
 					tempAcc.setEnabled(false);
 					aDao.insertAccount(tempAcc);
 					System.out.print("SUCCESS\n");
@@ -287,10 +292,10 @@ public class Main {
 	
 	public Set<Account> getAccounts() throws Exception{
 		//logger.info("getAccounts Start");
-		if(currentUser.getType().equals(UserType.ADMIN)) {
+		if(currentUser.getType().equals(UType.ADMIN)) {
 			return aDao.getAllAccounts();
 		}
-		else if (currentUser.getType().equals(UserType.CUSTOMER)) {
+		else if (currentUser.getType().equals(UType.CUSTOMER)) {
 			return aDao.getActiveAccountsByUser(currentUser.getId());
 		}
 		return null;
@@ -452,7 +457,7 @@ public class Main {
 
 	public int employMenu() throws Exception{
 		//logger.info("Employee Menu Start.");
-		if(!currentUser.getType().equals(UserType.EMPLOYEE)) {
+		if(!currentUser.getType().equals(UType.EMPLOYEE)) {
 			//logger.warn("THIS SHOULD NOT HAPPEN!");
 			return -1;
 		}
@@ -524,7 +529,7 @@ public class Main {
 
 	public int adminMenu() throws Exception {
 		//logger.info("Admin Menu Start");
-		if(!currentUser.getType().equals(UserType.ADMIN)) {
+		if(!currentUser.getType().equals(UType.ADMIN)) {
 			return -1;
 		}
 		boolean running = true;
@@ -574,7 +579,7 @@ public class Main {
 	}
 	public void cancelAccount() throws Exception {
 		//logger.info("Cancel Account");
-		if(currentUser.getType().equals(UserType.ADMIN))
+		if(currentUser.getType().equals(UType.ADMIN))
 		{
 			Set<Account> accounts = getAccounts();
 			boolean exit = false;
@@ -621,8 +626,8 @@ public class Main {
 	public void approveDeny() throws Exception {
 		//logger.info("Approve/Deny");
 		boolean exit = false;
-		if((currentUser.getType().equals(UserType.ADMIN)||
-				currentUser.getType().equals(UserType.EMPLOYEE)))
+		if((currentUser.getType().equals(UType.ADMIN)||
+				currentUser.getType().equals(UType.EMPLOYEE)))
 		{
 			Set<Account> accounts = aDao.getAllNeedApprovalAccounts();
 			if(accounts!=null) {
@@ -881,7 +886,7 @@ public class Main {
 	
 	public User getCustomer(String thing) throws Exception {
 		//logger.info("Get Customer");
-		Set<User> users = uDao.getAllUsersByType(UserType.CUSTOMER);
+		Set<User> users = uDao.getAllUsersByType(UType.CUSTOMER);
 		String myInput;
 		while(true) {
 			System.out.print("Please input the UserID of the user whose " + thing + " you would like to view.\n");

@@ -1,4 +1,4 @@
-package theBank;
+package theBank.DAO;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -9,17 +9,21 @@ import java.io.ObjectOutputStream;
 import java.util.HashSet;
 import java.util.Set;
 
+import theBank.accounts.Account;
+
 public class AccountDaoText implements AccountDao {
 
 
 	public String filePath = "./data/accounts.txt";
 	
-	AccountDaoText(String filePath){
-		this.filePath = filePath;
-	}
+
 	
-	AccountDaoText(){
+	public AccountDaoText(){
 		
+	}	
+	
+	public AccountDaoText(String filePath){
+		this.filePath = filePath;
 	}
 	
 	@SuppressWarnings({ "unchecked", "resource" })
@@ -208,5 +212,7 @@ public class AccountDaoText implements AccountDao {
 		}
 		return false;
 	}
+
+
 
 }

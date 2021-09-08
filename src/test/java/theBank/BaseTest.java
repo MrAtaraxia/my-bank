@@ -12,6 +12,11 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
 
+import theBank.accounts.*;
+import theBank.users.*;
+import theBank.DAO.*;
+import theBank.users.UType;
+
 /**
  * BaseTest.java
  * @author w3
@@ -120,11 +125,11 @@ public abstract class BaseTest {
 			System.out.print("\n");
 		}
 		System.out.print("Before\n");
-		User bob = new User(111, "Bob", "person", "cUser", "cPassword", "realemail", UserType.CUSTOMER);
+		User bob = new User(111, "Bob", "person", "cUser", "cPassword", "realemail", UType.CUSTOMER);
 		myMain.uDao.insertUser(bob);
 		myMain.uDao.updateUser(bob);
-		User u1 = new User(112, "Another", "Person", "eUser", "ePassword", "realemailagain", UserType.EMPLOYEE);
-		User u2 = new User(113, "Totally", "NotFake", "aUser", "aPassword", "another@email.com", UserType.ADMIN);
+		User u1 = new User(112, "Another", "Person", "eUser", "ePassword", "realemailagain", UType.EMPLOYEE);
+		User u2 = new User(113, "Totally", "NotFake", "aUser", "aPassword", "another@email.com", UType.ADMIN);
 		myMain.uDao.insertUser(u1);
 		myMain.uDao.updateUser(u1);
 		myMain.uDao.insertUser(u2);
@@ -141,26 +146,26 @@ public abstract class BaseTest {
 				aUser.setEmail(fn +ln+ "@gmail.com");
 				aUser.setPass("pass");
 				if(count%3==0) {
-					aUser.setType(UserType.CUSTOMER);
+					aUser.setType(UType.CUSTOMER);
 				}
 				if(count%3==1) {
-					aUser.setType(UserType.ADMIN);
+					aUser.setType(UType.ADMIN);
 				}
 				if(count%3==2) {
-					aUser.setType(UserType.EMPLOYEE);
+					aUser.setType(UType.EMPLOYEE);
 				}
 				myMain.uDao.insertUser(aUser);
 				count++;
 			}
 		}
 		count = 0;
-		Set<User> allUsers = myMain.uDao.getAllUsersByType(UserType.CUSTOMER);
+		Set<User> allUsers = myMain.uDao.getAllUsersByType(UType.CUSTOMER);
 		for(User aUser:allUsers) {
 			Integer[] users = {aUser.getId()};
 			Account acc2 = new Account();
 			acc2.setOwners(users);
 			if(count%2==0) {
-				acc2.setApproved(true, UserType.ADMIN);
+				acc2.setApproved(true, UType.ADMIN);
 			}
 			acc2.setBalance((double) 5000);
 			myMain.aDao.insertAccount(acc2);

@@ -1,6 +1,8 @@
-package theBank;
+package theBank.DAO;
 
 import java.util.Set;
+
+import theBank.accounts.Account;
 
 /**
  * Account DAO

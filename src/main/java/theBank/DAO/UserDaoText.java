@@ -1,10 +1,13 @@
-package theBank;
+package theBank.DAO;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.HashSet;
 import java.util.Set;
+
+import theBank.users.UType;
+import theBank.users.User;
 
 //import org.apache.logging.log4j.Logger;
 //import org.apache.logging.log4j.LogManager;
@@ -53,11 +56,11 @@ public class UserDaoText implements UserDao{
 	
 	public String filePath = "./data/users.txt";
 	
-	UserDaoText(){
+	public UserDaoText(){
 		//logger.info("UserDaoText default constructor.");
 	}
 	
-	UserDaoText(String filePath){
+	public UserDaoText(String filePath){
 		//logger.info("UserDaoText paramaterized constructor.");
 		//logger.info("filePath changed to :" + filePath);
 		this.filePath = filePath;
@@ -131,7 +134,7 @@ public class UserDaoText implements UserDao{
 	}
 	
 	@Override
-	public Set<User> getAllUsersByType(UserType type) throws Exception {
+	public Set<User> getAllUsersByType(UType type) throws Exception {
 		//logger.trace("getAllUsersByType start");
 		Set<User> allUsers = readUsers();
 		Set<User> toReturn = null;

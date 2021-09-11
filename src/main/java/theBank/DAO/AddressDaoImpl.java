@@ -6,14 +6,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
-
-import theBank.People.Person;
-import theBank.People.UType;
-import theBank.accounts.AType;
-import theBank.accounts.Account;
 import theBank.general.Address;
 import theBank.general.State;
 
@@ -31,7 +24,7 @@ public class AddressDaoImpl implements AddressDAO {
 	        		+ "state varchar(20) not null ,\r\n"
 	        		+ "zipcode varchar(5) not null check (zipcode REGEXP '^[0-9]{5}'),\r\n"
 	        		+ "city varchar(50) not null,\r\n"
-	        		+ "PRIMARY KEY (id)\r\n);");
+	        		+ "PRIMARY KEY (id));");
 	        String query = sb.toString();
 	        if(stmt.execute(query)) {
 	        	
@@ -60,6 +53,7 @@ public class AddressDaoImpl implements AddressDAO {
 	private Address extractAddressFromResultSet(ResultSet rs) throws SQLException {
 		Address addr = new Address();
 		addr.setId(rs.getInt("id") );
+		addr.setActive(rs.getBoolean("active") );
 		addr.setStreet(rs.getString("street") );
 		addr.setState(State.get(rs.getString("state")));
 		addr.setZipcode(rs.getString("zipcode"));
@@ -117,9 +111,8 @@ public class AddressDaoImpl implements AddressDAO {
 	        	addrs.put(aAddr.getId(), aAddr);
 	        }
 	        return addrs;
-	    } catch (SQLException ex) {
-	        ex.printStackTrace();
-	    }
+	    } 
+	    catch (SQLException ex) { ex.printStackTrace(); }
 	    return null;
 	}
 
@@ -140,8 +133,17 @@ public class AddressDaoImpl implements AddressDAO {
 	@Override
 	public boolean insertAddress(Address addr) throws Exception {
 	    Connection connection = ConnectionSingle.getConn();
+	    Map<Integer, Address> allAddr = getAllAddresses();
+	    for(Address add:allAddr.values()) {
+	    	if(add.getCity().equals(addr.getCity())) 
+	    		if(add.getState().equals(addr.getState()))
+	    			if(add.getZipcode().equals(addr.getZipcode()))
+	    				if(add.getStreet().equals(addr.getStreet()))
+	    					{ System.out.println("Duplicate"); return false; }
+	    }
 	    try {
-	        PreparedStatement ps = connection.prepareStatement("INSERT INTO address (street, state, zipcode, city) VALUES (?, ?, ?, ?)");
+	    	String query = "INSERT INTO address (street, state, zipcode, city) VALUES (?, ?, ?, ?)";
+	        PreparedStatement ps = connection.prepareStatement(query);
 	        ps.setString(1, addr.getStreet());
 	        ps.setString(2, addr.getState().toString());
 	        ps.setString(3, addr.getZipcode());
@@ -155,26 +157,52 @@ public class AddressDaoImpl implements AddressDAO {
 
 	@Override
 	public boolean updateAddress(Address addr) throws Exception {
-		// TODO Auto-generated method stub
-		return false;
+		Connection connection = ConnectionSingle.getConn();
+	    try {
+	    	String query = "UPDATE address SET active=?, street=?, state=?, zipcode=?, city=? WHERE id=?";
+	        PreparedStatement ps = connection.prepareStatement(query);
+			ps.setBoolean(1, addr.isActive());
+			ps.setString(2, addr.getStreet());
+			ps.setString(3, addr.getState().toString());
+			ps.setString(4, addr.getZipcode());
+			ps.setString(5, addr.getCity());
+			ps.setInt(6, addr.getId());
+	        int i = ps.executeUpdate();
+	      if(i == 1) { return true; }
+	    } 
+	    catch (SQLException ex) { System.out.println(ex); }
+	    return false;
 	}
 
 	@Override
 	public boolean activateAddress(int id) throws Exception {
-		// TODO Auto-generated method stub
+		Address anAdd = getAddress(id);
+		if(anAdd!=null) {
+			anAdd.setActive(true);
+			if(updateAddress(anAdd)) { return true; }
+		}
 		return false;
 	}
 
 	@Override
 	public boolean deactivateAddress(int id) throws Exception {
-		// TODO Auto-generated method stub
+		Address anAdd = getAddress(id);
+		if(anAdd!=null) {
+			anAdd.setActive(false);
+			if(updateAddress(anAdd)) { return true; }
+		}
 		return false;
 	}
 
 	@Override
 	public boolean deleteAddress(int id) throws Exception {
-		// TODO Auto-generated method stub
-		return false;
+	    Connection connection = ConnectionSingle.getConn();
+	    try {
+	        Statement stmt = connection.createStatement();
+	        int i = stmt.executeUpdate("DELETE FROM address WHERE id=" + id);
+	        if(i == 1) { return true; }
+	    } catch (SQLException ex) { ex.printStackTrace(); }
+	    return false;
 	}
 	
 	public static void main(String[] args) throws Exception {
@@ -184,11 +212,11 @@ public class AddressDaoImpl implements AddressDAO {
 		newAdd.setCity("A City");
 		newAdd.setState(State.NJ);
 		newAdd.setZipcode("12345");
-		newAdd.setStreet("1 First Street");
+		newAdd.setStreet("12 First Street");
 		addDao.insertAddress(newAdd);
 		Map<Integer, Address> myMap = addDao.getAllAddresses();
 		for(Address a:myMap.values()) {
-			System.out.println(a.getId()+"-"+a.getCity()+" "+a.getStreet());
+			System.out.println(a.getId()+"-"+a.getCity()+" "+a.getStreet() + " " + a.getState());
 		}
 		
 	}

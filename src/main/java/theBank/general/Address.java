@@ -3,10 +3,12 @@ package theBank.general;
 public class Address {
 	private static int nextId = 1;
 	private int id;
+	private boolean active=true;
 	private String street;
 	private String zipcode;
 	private State state;
 	private String city;
+
 
 	public int getId() {
 		return id;
@@ -27,6 +29,14 @@ public class Address {
 		return true;
 	}
 	
+	public boolean isActive() {
+		return active;
+	}
+
+	public void setActive(boolean active) {
+		this.active = active;
+	}
+
 	public String getStreet() {
 		return street;
 	}

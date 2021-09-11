@@ -19,14 +19,7 @@ public class AccountDaoImpl implements AccountDao {
 		Connection connection = ConnectionSingle.getConn();
 	    try {
 	        Statement stmt = connection.createStatement();
-	        
-	        sb.append("CREATE TABLE if not exists address (\r\n"
-	        		+ "id INTEGER auto_increment,\r\n"
-	        		+ "street varchar(50)  not null check (street REGEXP '^[0-9]+\\s+\\w+'),\r\n"
-	        		+ "state varchar(20) not null check (state REGEXP '^([New]|[South]|[North]|[West]|[Rhode])\\s*([A-Za-z]{2,}|[A-Za-z]{2,})*'),\r\n"
-	        		+ "zipcode varchar(5) not null check (zipcode REGEXP '^[0-9]{5}'),\r\n"
-	        		+ "city varchar(50) not null,\r\n"
-	        		+ "PRIMARY KEY (id)\r\n);");
+
 	        ResultSet rs = stmt.executeQuery(query);
 
 
@@ -172,9 +165,7 @@ public class AccountDaoImpl implements AccountDao {
 	    return true;
 	      }
 
-	    } catch (SQLException ex) {
-	        ex.printStackTrace();
-	    }
+	    } catch (SQLException ex) { ex.printStackTrace(); }
 
 	    return false;
 	}
@@ -185,15 +176,8 @@ public class AccountDaoImpl implements AccountDao {
 	    try {
 	        Statement stmt = connection.createStatement();
 	        int i = stmt.executeUpdate("DELETE FROM account WHERE id=" + id);
-
-	      if(i == 1) {
-	    return true;
-	      }
-
-	    } catch (SQLException ex) {
-	        ex.printStackTrace();
-	    }
-
+	        if(i == 1) { return true; }
+	    } catch (SQLException ex) { ex.printStackTrace(); }
 	    return false;
 	}
 

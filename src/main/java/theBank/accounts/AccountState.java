@@ -1,17 +1,17 @@
 package theBank.accounts;
 
 public enum AccountState {
-	ENABLED(0),
-	PENDING_CONFIRMATION(1),
-	PENDING_APPROVAL(2),
-	REJECTED(2),
-	CLOSED(3);
-	private final int value;
-	private AccountState(int value) {
+	ENABLED("ENABLED"),
+	PENDING_CONFIRMATION("PENDING CONFIRMATION"),
+	PENDING_APPROVAL("PENDING APPROVAL"),
+	REJECTED("REJECTED"),
+	CLOSED("CLOSED");
+	private final String value;
+	private AccountState(String value) {
 		this.value = value;
 	}
 	
-	public int getValue() {
+	public String toString() {
 		return this.value;
 	}
 }

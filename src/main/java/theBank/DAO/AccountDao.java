@@ -18,5 +18,7 @@ public interface AccountDao {
     Set<Account> getAccountsByUser(Integer UserID) throws Exception;
     boolean insertAccount(Account account) throws Exception;
     boolean updateAccount(Account account) throws Exception;
+    boolean activateAccount(int id) throws Exception;
+    boolean deactivateAccount(int id) throws Exception;
     boolean deleteAccount(int id) throws Exception;
 }

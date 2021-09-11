@@ -2,7 +2,7 @@ package theBank.accounts;
 
 import java.io.Serializable;
 
-import theBank.users.UType;
+import theBank.People.UType;
 
 public class Account implements Serializable{
 	
@@ -13,7 +13,7 @@ public class Account implements Serializable{
 	private static final long serialVersionUID = -6579968071499579017L;
 	private Integer id;
 	private Double balance;
-	private Integer[] owners;
+	private Integer[] ownerIDs;
 	private Boolean enabled;
 	private Boolean approved;
 	private AType type;
@@ -25,24 +25,34 @@ public class Account implements Serializable{
 		this.approved = false;
 		this.type = AType.INDIVIDUAL;
 		nextId++;
-		
 	}
 	
 	Account(Integer id, Integer[] owners, AType type){
 		this.id = id;
-		this.owners = owners;
+		this.ownerIDs = owners;
 		this.balance = 0.0d;
 		this.enabled = true;
 		this.approved = false;
 		this.type = type;
 	}
 	
-	public Integer getId() {
+	public int getId() {
 		return id;
 	}
 
-	public void setId(int userIds) {
-		this.id = userIds;
+	public boolean setId() {
+		return setId(nextId);
+	}
+	
+	public boolean setId(int id) {
+		if(id <=0) {
+			return false;
+		}
+		if(id >= nextId) {
+			nextId = id+1;
+		}
+		this.id = id;
+		return true;
 	}
 
 	public Double getBalance() {
@@ -58,11 +68,11 @@ public class Account implements Serializable{
 	}
 
 	public Integer[] getOwners() {
-		return owners;
+		return ownerIDs;
 	}
 
 	public void setOwners(Integer[] owners) {
-		this.owners = owners;
+		this.ownerIDs = owners;
 	}
 
 	public Boolean getEnabled() {

@@ -13,9 +13,8 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 
 import theBank.accounts.*;
-import theBank.users.*;
 import theBank.DAO.*;
-import theBank.users.UType;
+import theBank.People.*;
 
 /**
  * BaseTest.java
@@ -83,14 +82,14 @@ public abstract class BaseTest {
 	}
 	
 	@BeforeClass
-	public static void makeUsers() throws Exception {
+	public static void makeUsersMySQL() throws Exception {
 		myMain = new Main();
-		User.nextId = 5;
+		Person.nextId = 5;
 		Account.nextId = 5;
-		myMain.uDao = new UserDaoText("./data/usersTest.txt");
-		myMain.aDao = new AccountDaoText("./data/accountsTest.txt");
+		//myMain.uDao = new UserDaoText("./data/usersTest.txt");
+		//myMain.aDao = new AccountDaoText("./data/accountsTest.txt");
 		
-		for(User use:myMain.uDao.getAllUsers()) {
+		for(Person use:myMain.uDao.getAllUsers()) {
 			myMain.uDao.deleteUser(use.getId());
 		}
 		for(Account acc:myMain.aDao.getAllAccounts()) {
@@ -113,7 +112,7 @@ public abstract class BaseTest {
 			System.out.print("\n");
 		}
 		
-		for(User use:myMain.uDao.getAllUsers()) {
+		for(Person use:myMain.uDao.getAllUsers()) {
 			System.out.print(" ID:"+ use.getId());
 			System.out.print(" FN:"+ use.getFname());
 			System.out.print(" LN:"+ use.getLname());
@@ -125,11 +124,11 @@ public abstract class BaseTest {
 			System.out.print("\n");
 		}
 		System.out.print("Before\n");
-		User bob = new User(111, "Bob", "person", "cUser", "cPassword", "realemail", UType.CUSTOMER);
+		Person bob = new Person(111, "Bob", "person", "cUser", "cPassword", "realemail", UType.CUSTOMER);
 		myMain.uDao.insertUser(bob);
 		myMain.uDao.updateUser(bob);
-		User u1 = new User(112, "Another", "Person", "eUser", "ePassword", "realemailagain", UType.EMPLOYEE);
-		User u2 = new User(113, "Totally", "NotFake", "aUser", "aPassword", "another@email.com", UType.ADMIN);
+		Person u1 = new Person(112, "Another", "Person", "eUser", "ePassword", "realemailagain", UType.EMPLOYEE);
+		Person u2 = new Person(113, "Totally", "NotFake", "aUser", "aPassword", "another@email.com", UType.ADMIN);
 		myMain.uDao.insertUser(u1);
 		myMain.uDao.updateUser(u1);
 		myMain.uDao.insertUser(u2);
@@ -139,7 +138,7 @@ public abstract class BaseTest {
 		int count = 0;
 		for(String fn:f_names) {
 			for(String ln:l_names) {
-				User aUser = new User();
+				Person aUser = new Person();
 				aUser.setFname(fn);
 				aUser.setLname(ln);
 				aUser.setUsername(fn+ln);
@@ -159,8 +158,8 @@ public abstract class BaseTest {
 			}
 		}
 		count = 0;
-		Set<User> allUsers = myMain.uDao.getAllUsersByType(UType.CUSTOMER);
-		for(User aUser:allUsers) {
+		Set<Person> allUsers = myMain.uDao.getAllUsersByType(UType.CUSTOMER);
+		for(Person aUser:allUsers) {
 			Integer[] users = {aUser.getId()};
 			Account acc2 = new Account();
 			acc2.setOwners(users);
@@ -189,7 +188,127 @@ public abstract class BaseTest {
 			System.out.print("\n");
 		}
 		
-		for(User use:myMain.uDao.getAllUsers()) {
+		for(Person use:myMain.uDao.getAllUsers()) {
+			System.out.print(" ID:"+ use.getId());
+			System.out.print(" FN:"+ use.getFname());
+			System.out.print(" LN:"+ use.getLname());
+			System.out.print(" UN:"+ use.getUsername());
+			System.out.print(" PA:"+ use.getPass());
+			System.out.print(" EM:"+ use.getEmail());
+			System.out.print(" WI:"+ use.getWithdrawn());
+			System.out.print(" TY:"+ use.getType());
+			System.out.print("\n");
+		}
+	}
+	
+	@BeforeClass
+	public static void makeUsersText() throws Exception {
+		myMain = new Main();
+		Person.nextId = 5;
+		Account.nextId = 5;
+		//myMain.uDao = new UserDaoText("./data/usersTest.txt");
+		//myMain.aDao = new AccountDaoText("./data/accountsTest.txt");
+		
+		for(Person use:myMain.uDao.getAllUsers()) {
+			myMain.uDao.deleteUser(use.getId());
+		}
+		for(Account acc:myMain.aDao.getAllAccounts()) {
+			myMain.aDao.deleteAccount(acc.getId());
+		}
+		for(Account acca:myMain.aDao.getAllAccounts()) {
+			System.out.print(acca.getId()+" AP:");
+			System.out.print(acca.getApproved()+" EN:");
+			System.out.print(acca.getEnabled()+" BA:");
+			System.out.print(acca.getBalance()+" TY:");
+			System.out.print(acca.getType()+" OWN:");
+			if(acca.getOwners()!=null) {
+				for(int i:acca.getOwners()) {
+					System.out.print(i+" ");
+				}
+			}
+			else {
+				myMain.aDao.deleteAccount(acca.getId());
+			}
+			System.out.print("\n");
+		}
+		
+		for(Person use:myMain.uDao.getAllUsers()) {
+			System.out.print(" ID:"+ use.getId());
+			System.out.print(" FN:"+ use.getFname());
+			System.out.print(" LN:"+ use.getLname());
+			System.out.print(" UN:"+ use.getUsername());
+			System.out.print(" PA:"+ use.getPass());
+			System.out.print(" EM:"+ use.getEmail());
+			System.out.print(" WI:"+ use.getWithdrawn());
+			System.out.print(" TY:"+ use.getType());
+			System.out.print("\n");
+		}
+		System.out.print("Before\n");
+		Person bob = new Person(111, "Bob", "person", "cUser", "cPassword", "realemail", UType.CUSTOMER);
+		myMain.uDao.insertUser(bob);
+		myMain.uDao.updateUser(bob);
+		Person u1 = new Person(112, "Another", "Person", "eUser", "ePassword", "realemailagain", UType.EMPLOYEE);
+		Person u2 = new Person(113, "Totally", "NotFake", "aUser", "aPassword", "another@email.com", UType.ADMIN);
+		myMain.uDao.insertUser(u1);
+		myMain.uDao.updateUser(u1);
+		myMain.uDao.insertUser(u2);
+		myMain.uDao.updateUser(u2);
+		String[] f_names = {"Jen", "Bob", "Chris", "Dan", "Mary", "Sam", "Kate", "Barb"};
+		String[] l_names = {"Smith", "Place", "Person", "Again", "ABC", "DEF", "GHI", "JKL", "MNO", "PQR"};
+		int count = 0;
+		for(String fn:f_names) {
+			for(String ln:l_names) {
+				Person aUser = new Person();
+				aUser.setFname(fn);
+				aUser.setLname(ln);
+				aUser.setUsername(fn+ln);
+				aUser.setEmail(fn +ln+ "@gmail.com");
+				aUser.setPass("pass");
+				if(count%3==0) {
+					aUser.setType(UType.CUSTOMER);
+				}
+				if(count%3==1) {
+					aUser.setType(UType.ADMIN);
+				}
+				if(count%3==2) {
+					aUser.setType(UType.EMPLOYEE);
+				}
+				myMain.uDao.insertUser(aUser);
+				count++;
+			}
+		}
+		count = 0;
+		Set<Person> allUsers = myMain.uDao.getAllUsersByType(UType.CUSTOMER);
+		for(Person aUser:allUsers) {
+			Integer[] users = {aUser.getId()};
+			Account acc2 = new Account();
+			acc2.setOwners(users);
+			if(count%2==0) {
+				acc2.setApproved(true, UType.ADMIN);
+			}
+			acc2.setBalance((double) 5000);
+			myMain.aDao.insertAccount(acc2);
+			count++;
+		}
+
+		for(Account acca:myMain.aDao.getAllAccounts()) {
+			System.out.print(acca.getId()+" AP:");
+			System.out.print(acca.getApproved()+" EN:");
+			System.out.print(acca.getEnabled()+" BA:");
+			System.out.print(acca.getBalance()+" TY:");
+			System.out.print(acca.getType()+" OWN:");
+			if(acca.getOwners()!=null) {
+				for(int i:acca.getOwners()) {
+					System.out.print(i+" ");
+				}
+			}
+			else {
+				myMain.aDao.deleteAccount(acca.getId());
+			}
+			System.out.print("\n");
+		}
+		
+		for(Person use:myMain.uDao.getAllUsers()) {
 			System.out.print(" ID:"+ use.getId());
 			System.out.print(" FN:"+ use.getFname());
 			System.out.print(" LN:"+ use.getLname());

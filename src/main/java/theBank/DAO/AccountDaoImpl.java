@@ -8,15 +8,36 @@ import java.sql.Statement;
 import java.util.HashSet;
 import java.util.Set;
 
+import theBank.People.UType;
 import theBank.accounts.AType;
 import theBank.accounts.Account;
-import theBank.users.UType;
 
 public class AccountDaoImpl implements AccountDao {
 
+	private void createTableIfNotExist() {
+		StringBuilder sb = new StringBuilder();
+		Connection connection = ConnectionSingle.getConn();
+	    try {
+	        Statement stmt = connection.createStatement();
+	        
+	        sb.append("CREATE TABLE if not exists address (\r\n"
+	        		+ "id INTEGER auto_increment,\r\n"
+	        		+ "street varchar(50)  not null check (street REGEXP '^[0-9]+\\s+\\w+'),\r\n"
+	        		+ "state varchar(20) not null check (state REGEXP '^([New]|[South]|[North]|[West]|[Rhode])\\s*([A-Za-z]{2,}|[A-Za-z]{2,})*'),\r\n"
+	        		+ "zipcode varchar(5) not null check (zipcode REGEXP '^[0-9]{5}'),\r\n"
+	        		+ "city varchar(50) not null,\r\n"
+	        		+ "PRIMARY KEY (id)\r\n);");
+	        ResultSet rs = stmt.executeQuery(query);
+
+
+	    } catch (SQLException ex) {
+	        ex.printStackTrace();
+	    }
+	}
+	
 	@Override
 	public Account getAccount(int id) {
-		Connection connection = ConnectionFactory.getConnection();
+		Connection connection = ConnectionSingle.getConn();
 	    try {
 	        Statement stmt = connection.createStatement();
 	        String query = "SELECT * FROM account WHERE id=";
@@ -40,8 +61,6 @@ public class AccountDaoImpl implements AccountDao {
 		account.setId( rs.getInt("id") );
 		System.out.println(account.getId());
 		account.setBalance( rs.getDouble("balance") );
-		//TODO SETUP ACCOUNT OWNERS IN A BETTER WAY!
-		//TODO CHANGE IT DO DEAL WITH JOINT ACCOUNTS
 		account.setOwners(null);
 		account.setEnabled( rs.getBoolean("enabled") );
 		account.setApproved( rs.getBoolean("approved") , UType.ADMIN);
@@ -54,7 +73,7 @@ public class AccountDaoImpl implements AccountDao {
 	
 	@Override
 	public Set<Account> getAllAccounts() {
-		Connection connection = ConnectionFactory.getConnection();
+		Connection connection = ConnectionSingle.getConn();
 	    try 
 	    {
 	        Statement stmt = connection.createStatement();
@@ -82,25 +101,25 @@ public class AccountDaoImpl implements AccountDao {
 
 	@Override
 	public Set<Account> getAccountsByUser(Integer UserID) throws Exception {
-	    Connection connection = ConnectionFactory.getConnection();
-//	    try 
-//	    {
-//	    	//TODO CHANGE IT TO DEAL WITH JOINT ACCOUNTS.
-//	    	String query = "SELECT * FROM account ac INNER JOIN userwithaccount ua ON ac.id = ua.AccountID WHERE ua.UserID=?";
-//	        PreparedStatement ps = connection.prepareStatement(query);
-//	        ps.setString(1, user);
-//	        ResultSet rs = ps.executeQuery();
-//
-//	        if(rs.next())
-//	        {
-//	        	return extractAccountFromResultSet(rs);
-//	        }
-//
-//	    } 
-//	    catch (SQLException ex) 
-//	    {
-//	        ex.printStackTrace();
-//	    }
+	    Connection connection = ConnectionSingle.getConn();
+	    try 
+	    {
+	    	//TODO CHANGE IT TO DEAL WITH JOINT ACCOUNTS.
+	    	String query = "SELECT * FROM account ac INNER JOIN userwithaccount ua ON ac.id = ua.AccountID WHERE ua.UserID=?";
+	        PreparedStatement ps = connection.prepareStatement(query);
+	        ps.setString(1, user);
+	        ResultSet rs = ps.executeQuery();
+
+	        if(rs.next())
+	        {
+	        	return extractAccountFromResultSet(rs);
+	        }
+
+	    } 
+	    catch (SQLException ex) 
+	    {
+	        ex.printStackTrace();
+	    }
 
 	    return null;
 	}
@@ -108,7 +127,7 @@ public class AccountDaoImpl implements AccountDao {
 	@Override
 	public boolean insertAccount(Account account) {
 	    
-	    Connection connection = ConnectionFactory.getConnection();
+	    Connection connection = ConnectionSingle.getConn();
 	    try {
 	        PreparedStatement ps = connection.prepareStatement("INSERT INTO account VALUES (NULL, ?, ?, ?, ?, ?)");
 
@@ -136,7 +155,7 @@ public class AccountDaoImpl implements AccountDao {
 
 	@Override
 	public boolean updateAccount(Account account) {
-		Connection connection = ConnectionFactory.getConnection();
+		Connection connection = ConnectionSingle.getConn();
 	    try {
 	        
 	        PreparedStatement ps = connection.
@@ -162,7 +181,7 @@ public class AccountDaoImpl implements AccountDao {
 
 	@Override
 	public boolean deleteAccount(int id) {
-	    Connection connection = ConnectionFactory.getConnection();
+	    Connection connection = ConnectionSingle.getConn();
 	    try {
 	        Statement stmt = connection.createStatement();
 	        int i = stmt.executeUpdate("DELETE FROM account WHERE id=" + id);
@@ -196,6 +215,11 @@ public class AccountDaoImpl implements AccountDao {
 		return null;
 	}
 
-
+	public static void main(String[] args) {
+		AccountDaoImpl aDao = new AccountDaoImpl();
+		Set<Account> accounts = aDao.getAllAccounts();
+		accounts.forEach(thing -> System.out.println(thing));
+		
+	}
 
 }

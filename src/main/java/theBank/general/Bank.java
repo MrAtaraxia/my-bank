@@ -1,7 +1,8 @@
 package theBank.general;
 
 public class Bank {
-	int id;
+	private static int nextId;
+	private int id;
 	private String name;
 	private Address address;
 	private String routingNumber;
@@ -9,6 +10,25 @@ public class Bank {
 	Bank(){
 	}
 
+	public int getId() {
+		return id;
+	}
+
+	public boolean setId() {
+		return setId(nextId);
+	}
+	
+	public boolean setId(int id) {
+		if(id <=0) {
+			return false;
+		}
+		if(id >= nextId) {
+			nextId = id+1;
+		}
+		this.id = id;
+		return true;
+	}
+	
 	public String getName() {
 		return name;
 	}

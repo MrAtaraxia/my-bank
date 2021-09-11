@@ -7,8 +7,8 @@ import java.util.Set;
 import org.apache.logging.log4j.Logger;
 
 import theBank.accounts.*;
-import theBank.users.*;
 import theBank.DAO.*;
+import theBank.People.*;
 
 import org.apache.logging.log4j.LogManager;
 
@@ -34,7 +34,7 @@ public class Main {
 	public  String clearScreen = "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n";
 	public  String spacingOnScreen = "\n\n\n\n\n\n\n\n";
 
-	User currentUser = null;
+	Person currentUser = null;
 	UType typeOfUser = UType.NONE;
 	public Scanner aScanner = null;
 	
@@ -63,7 +63,7 @@ public class Main {
 	String PRESS_ANY = 			"Press Any Key to Continue:";
 	int minLength = 5;
 	int maxLength = 50;
-	protected UserDao uDao = new UserDaoText();
+	protected PersonDao uDao = new PersonDaoText();
 	protected AccountDao aDao = new AccountDaoText();
 	
 	
@@ -81,11 +81,11 @@ public class Main {
 		}
 		
 		Account.nextId = nextAcc+1;
-		Set<User> allUsers = new HashSet<User>();
+		Set<Person> allUsers = new HashSet<Person>();
 
 		allUsers = uDao.getAllUsers();
 		int nextUser = 0;
-		for(User use: allUsers) {
+		for(Person use: allUsers) {
 			if(nextUser < use.getId()) {
 				nextUser = use.getId();
 			}
@@ -93,7 +93,7 @@ public class Main {
 //		User.nextId = nextUser+1;
 //		
 		
-		System.out.print("NEXT U:" + User.nextId + "\n");
+		System.out.print("NEXT U:" + Person.nextId + "\n");
 		System.out.print("NEXT A:" + Account.nextId + "\n");
 		//User bob = new User(13, "aUser", "aPassword", 20, UserType.ADMIN);
 		//bob.getName();
@@ -245,7 +245,7 @@ public class Main {
 		System.out.print("Input > ");
 		theInput = aScanner.nextLine();
 		logger.info("User:" + currentUser.getId().toString() + " - Applied to open a joint account with:" + theInput);
-		for(User aUser:uDao.getAllUsersByType(UType.CUSTOMER)) {
+		for(Person aUser:uDao.getAllUsersByType(UType.CUSTOMER)) {
 			if(theInput.equals(aUser.getId().toString())) {
 				System.out.print("USERID!"+aUser.getId());
 				if(!aUser.getId().equals(currentUser.getId())){
@@ -497,7 +497,7 @@ public class Main {
 	
 	public void viewCustAccInfo() throws Exception {
 		//logger.info("View Customer Account Info");
-		User tempUser = null;
+		Person tempUser = null;
 		tempUser = getCustomer("Account Information");
 		Set<Account> tempAccounts = null;
 		tempAccounts = aDao.getActiveAccountsByUser(tempUser.getId());
@@ -515,7 +515,7 @@ public class Main {
 	
 	public void viewCustPersonalInfo() throws Exception {
 		//logger.info("View Customer Personal Information");
-		User tempUser = null;
+		Person tempUser = null;
 		tempUser = getCustomer("Personal Information");
 		if(tempUser!=null) {
 			System.out.print("User " + tempUser.getId() + "\n");
@@ -698,7 +698,7 @@ public class Main {
 		//logger.info("Login Screen");
 		String username = inputChoice("Username");
 		String password = inputChoice("Password");
-		User tempUser = uDao.getUserByUserNameAndPassword(username, password);
+		Person tempUser = uDao.getUserByUserNameAndPassword(username, password);
 		if(tempUser==null) {
 			System.out.print("That Username and Password combination does not work.\n");
 			System.out.print("Please try again later.\nThank you.");
@@ -807,7 +807,7 @@ public class Main {
 					confirm = aScanner.nextLine();
 					if(confirm.equals(theInput)) {
 						uPass = theInput;
-						User use = new User();
+						Person use = new Person();
 						use.setFname("temp");
 						use.setLname("acc");
 						use.setUsername(uName);
@@ -884,14 +884,14 @@ public class Main {
 		}
 	}
 	
-	public User getCustomer(String thing) throws Exception {
+	public Person getCustomer(String thing) throws Exception {
 		//logger.info("Get Customer");
-		Set<User> users = uDao.getAllUsersByType(UType.CUSTOMER);
+		Set<Person> persons = uDao.getAllUsersByType(UType.CUSTOMER);
 		String myInput;
 		while(true) {
 			System.out.print("Please input the UserID of the user whose " + thing + " you would like to view.\n");
 			myInput = aScanner.nextLine();
-			for(User use: users) {
+			for(Person use: persons) {
 				if(myInput.equalsIgnoreCase(use.getId().toString())) {
 					return use;
 				}

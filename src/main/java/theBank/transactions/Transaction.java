@@ -1,25 +1,29 @@
 package theBank.transactions;
 
+import java.time.LocalDateTime;
 import java.util.Calendar;
 //import java.util.Date;
 
 public class Transaction {
-	public static int next_id = 1;
+	public static int nextId = 1;
 	private int id;
-	private int AccountID;
-	private int month;
-	private int day;
-	private String description;
-	private double addition;
-	private double subtraction;
-	private double balance;
+	private int AccountLocalID;
+	private int RoutingLocalID;
+	private int PersonID;
+	private int AccountExID;
+	private int RoutingExID;
+	private String Description;
+	private int Addition;
+	private int Subtraction;
+	private int Balance;
 	private TState state;
-	
-	
+	private TType type;
+	private boolean taxable;
+	private LocalDateTime created;
+	private LocalDateTime modified;
 	
 	Transaction(){
-		this(next_id);
-		
+		this(nextId);
 	}
 	
 	Transaction(int id){
@@ -30,77 +34,91 @@ public class Transaction {
 		return id;
 	}
 
-	public void setId(int id) {
-		if(id >= next_id) {
-			next_id = id+1;
+	public boolean setId() {
+		return setId(nextId);
+	}
+	
+	public boolean setId(int id) {
+		if(id <=0) {
+			return false;
+		}
+		if(id >= nextId) {
+			nextId = id+1;
 		}
 		this.id = id;
-	}
-
-	public int getAccountID() {
-		return AccountID;
-	}
-
-	public void setAccountID(int accountID) {
-		AccountID = accountID;
-	}
-
-	public int getMonth() {
-		return month;
-	}
-
-	public void setMonth() {
-		Calendar myCalendar = Calendar.getInstance();
-		this.setMonth(myCalendar.get(Calendar.MONTH));
+		return true;
 	}
 	
-	public void setMonth(int month) {
-		this.month = month;
+	public int getAccountLocalID() {
+		return AccountLocalID;
 	}
 
-	public int getDay() {
-		return day;
+	public void setAccountLocalID(int accountLocalID) {
+		AccountLocalID = accountLocalID;
 	}
 
-	public void setDay() {
-		Calendar myCalendar = Calendar.getInstance();
-		this.setDay(myCalendar.get(Calendar.DAY_OF_MONTH));
+	public int getRoutingLocalID() {
+		return RoutingLocalID;
 	}
-	
-	public void setDay(int day) {
-		this.day = day;
+
+	public void setRoutingLocalID(int routingLocalID) {
+		RoutingLocalID = routingLocalID;
+	}
+
+	public int getPersonID() {
+		return PersonID;
+	}
+
+	public void setPersonID(int personID) {
+		PersonID = personID;
+	}
+
+	public int getAccountExID() {
+		return AccountExID;
+	}
+
+	public void setAccountExID(int accountExID) {
+		AccountExID = accountExID;
+	}
+
+	public int getRoutingExID() {
+		return RoutingExID;
+	}
+
+	public void setRoutingExID(int routingExID) {
+		RoutingExID = routingExID;
 	}
 
 	public String getDescription() {
-		return description;
+		return Description;
 	}
 
 	public void setDescription(String description) {
-		this.description = description;
+		Description = description;
 	}
 
-	public double getAddition() {
-		return addition;
+	public int getAddition() {
+		return Addition;
 	}
 
-	public void setAddition(double addition) {
-		this.addition = addition;
+	public void setAddition(int addition) {
+		Addition = addition;
 	}
 
-	public double getSubtraction() {
-		return subtraction;
+	public int getSubtraction() {
+		return Subtraction;
 	}
 
-	public void setSubtraction(double subtraction) {
-		this.subtraction = subtraction;
+	public void setSubtraction(int subtraction) {
+		Subtraction = subtraction;
 	}
 
-	public double getBalance() {
-		return balance;
+	public int getBalance() {
+		return Balance;
 	}
 
-	public void setBalance(double balance) {
-		this.balance = balance;
+	public void setBalance(int balance) {
+		Balance = balance;
 	}
 
 	public TState getState() {
@@ -110,4 +128,38 @@ public class Transaction {
 	public void setState(TState state) {
 		this.state = state;
 	}
+
+	public TType getType() {
+		return type;
+	}
+
+	public void setType(TType type) {
+		this.type = type;
+	}
+
+	public boolean isTaxable() {
+		return taxable;
+	}
+
+	public void setTaxable(boolean taxable) {
+		this.taxable = taxable;
+	}
+
+	public LocalDateTime getCreated() {
+		return created;
+	}
+
+	public void setCreated(LocalDateTime created) {
+		this.created = created;
+	}
+
+	public LocalDateTime getModified() {
+		return modified;
+	}
+
+	public void setModified(LocalDateTime modified) {
+		this.modified = modified;
+	}
+
+
 }

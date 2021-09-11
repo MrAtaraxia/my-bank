@@ -1,5 +1,9 @@
 package theBank.transactions;
 
+import java.util.HashMap;
+import java.util.Map;
+
+
 public enum TType {
 	ACH_CREDIT("ACH CREDIT"),
 	ACH_WITHDRAWL("ACH WITHDRAWL"),
@@ -24,7 +28,23 @@ public enum TType {
 		this.value = value;
 	}
 	
+	@Override
 	public String toString() {
 		return this.value;
 	}
+	
+    private static final Map<String, TType> lookup = new HashMap<>();
+    
+    static
+    {
+        for(TType sta : TType.values())
+        {
+            lookup.put(sta.toString(), sta);
+        }
+    }
+
+    public static TType get(String url) 
+    {
+        return lookup.get(url);
+    }
 }

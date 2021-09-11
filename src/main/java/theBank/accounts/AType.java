@@ -1,5 +1,8 @@
 package theBank.accounts;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public enum AType {
 	JOINT("JOINT"),
 	INDIVIDUAL("INDIVIDUAL"),
@@ -16,4 +19,20 @@ public enum AType {
 	public String toString() {
 		return this.value;
 	}
+	
+    private static final Map<String, AType> lookup = new HashMap<>();
+    
+    static
+    {
+        for(AType sta : AType.values())
+        {
+            lookup.put(sta.toString(), sta);
+        }
+    }
+
+    public static AType get(String url) 
+    {
+        return lookup.get(url);
+    }
+
 }

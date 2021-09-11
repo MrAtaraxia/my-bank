@@ -1,5 +1,8 @@
 package theBank.general;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public enum State {
 	AL("Alabama"),
 	AK("Alaska"),
@@ -51,12 +54,27 @@ public enum State {
 	WV("West Virgina"),
 	WI("Wisconsin"),
 	WY("Wyoming");
-	private final String value;
-	private State(String value) {
-		this.value = value;
-	}
+	private String name;
 	
-	public String toString() {
-		return this.value;
+	private State(String name) {
+		this.name = name;
 	}
+
+	public String toString() {
+		return this.name;
+	}
+    private static final Map<String, State> lookup = new HashMap<>();
+  
+    static
+    {
+        for(State sta : State.values())
+        {
+            lookup.put(sta.toString(), sta);
+        }
+    }
+
+    public static State get(String url) 
+    {
+        return lookup.get(url);
+    }
 }

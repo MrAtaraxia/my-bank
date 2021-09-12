@@ -126,7 +126,6 @@ public class AddressDaoImpl implements AddressDAO {
 
 	@Override
 	public boolean insertAddress(Address addr) throws Exception {
-	    Connection connection = ConnectionSingle.getConn();
 	    Map<Integer, Address> allAddr = getAllAddresses();
 	    for(Address add:allAddr.values()) {
 	    	if(add.getCity().equals(addr.getCity())) 
@@ -135,6 +134,7 @@ public class AddressDaoImpl implements AddressDAO {
 	    				if(add.getStreet().equals(addr.getStreet()))
 	    					{ System.out.println("Duplicate"); return false; }
 	    }
+	    Connection connection = ConnectionSingle.getConn();
 	    try {
 	    	String query = "INSERT INTO address (street, state, zipcode, city) VALUES (?, ?, ?, ?)";
 	        PreparedStatement ps = connection.prepareStatement(query);
@@ -154,7 +154,7 @@ public class AddressDaoImpl implements AddressDAO {
 	    try {
 	    	String query = "UPDATE address SET active=?, street=?, state=?, zipcode=?, city=? WHERE id=?";
 	        PreparedStatement ps = connection.prepareStatement(query);
-			ps.setBoolean(1, addr.isActive());
+			ps.setBoolean(1, addr.getActive());
 			ps.setString(2, addr.getStreet());
 			ps.setString(3, addr.getState().toString());
 			ps.setString(4, addr.getZipcode());

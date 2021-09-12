@@ -29,7 +29,7 @@ public class Address {
 		return true;
 	}
 	
-	public boolean isActive() {
+	public boolean getActive() {
 		return active;
 	}
 

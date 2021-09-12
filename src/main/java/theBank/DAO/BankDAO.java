@@ -15,9 +15,9 @@ public interface BankDAO {
     public Bank getBankByRouting(String routingNumber) throws Exception;
     Map<Integer, Bank> getAllBanks() throws Exception;
     Map<Integer, Bank> getAllActiveBanks() throws Exception;
-    Map<Integer, Bank> getAllBanksByState(State state) throws Exception;
-    boolean insertBank(Bank addr) throws Exception;
-    boolean updateBank(Bank addr) throws Exception;
+    Map<Integer, Bank> getAllBanksByAddressID(int addressid) throws Exception;
+    boolean insertBank(Bank abank) throws Exception;
+    boolean updateBank(Bank abank) throws Exception;
     boolean activateBank(int id) throws Exception;
     boolean deactivateBank(int id) throws Exception;
     boolean deleteBank(int id) throws Exception;

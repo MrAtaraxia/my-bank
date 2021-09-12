@@ -23,10 +23,6 @@ public class Bank {
 	public Integer getId() {
 		return id;
 	}
-
-	public boolean setId() {
-		return setId(nextId);
-	}
 	
 	public boolean setId(Integer id) {
 		if(id <=0) {

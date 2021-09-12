@@ -2,7 +2,6 @@ package theBank.DAO;
 
 import java.util.Map;
 
-import theBank.People.Person;
 import theBank.general.Address;
 import theBank.general.State;
 

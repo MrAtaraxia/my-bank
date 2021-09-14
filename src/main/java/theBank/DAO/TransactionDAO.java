@@ -1,8 +1,6 @@
 package theBank.DAO;
 
 import java.util.List;
-import java.util.Map;
-
 import theBank.transactions.TState;
 import theBank.transactions.TType;
 import theBank.transactions.Transaction;

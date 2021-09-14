@@ -26,7 +26,7 @@ public class PersonDaoImpl extends BaseDAOImpl implements PersonDao {
 
 	@Override
 	public List<Person> getAllPeople() throws Exception {
-		List<Person> toReturn = null;
+		List<Person> toReturn = new ArrayList<>();
 		for(var part:getAllIt(
 				"Person", new Person(), Person.lookup).entrySet()) {
 			if(toReturn == null) { toReturn = new ArrayList<>(); }
@@ -37,7 +37,7 @@ public class PersonDaoImpl extends BaseDAOImpl implements PersonDao {
 
 	@Override
 	public List<Person> getAllActivePeople() throws Exception {
-		List<Person> toReturn = null;
+		List<Person> toReturn = new ArrayList<>();
 		List<String> myListT = new ArrayList<>();
 		List<Object> myListV = new ArrayList<>();
 		myListT.add("active");
@@ -54,7 +54,7 @@ public class PersonDaoImpl extends BaseDAOImpl implements PersonDao {
 
 	@Override
 	public List<Person> getAllPeopleByType(UType utype) throws Exception {
-		List<Person> toReturn = null;
+		List<Person> toReturn = new ArrayList<>();
 		UsernameDaoImpl uDao = new UsernameDaoImpl();
 		List<Username> uName = uDao.getAllUsernamesByType(utype);
 		for(Username aname:uName) {
@@ -71,7 +71,7 @@ public class PersonDaoImpl extends BaseDAOImpl implements PersonDao {
 	
 	@Override
 	public List<Person> getAllActivePeopleByType(UType utype) throws Exception {
-		List<Person> toReturn = null;
+		List<Person> toReturn = new ArrayList<>();
 		UsernameDaoImpl uDao = new UsernameDaoImpl();
 		List<Username> uName = uDao.getAllActiveUsernamesByType(utype);
 		for(Username aname:uName) {
@@ -98,7 +98,7 @@ public class PersonDaoImpl extends BaseDAOImpl implements PersonDao {
 	@Override
 	public Person getPersonByUserAndPass(String user, String pass) throws Exception {
 		try {
-			System.out.println("PERSON BY USER AND PASS");
+			//System.out.println("PERSON BY USER AND PASS");
 			UsernameDaoImpl uDao = new UsernameDaoImpl();
 			return getPerson(uDao.getUserIDByUNameAndPass(user, pass));
 		} catch (Exception e) { System.out.println(e); }
@@ -107,7 +107,7 @@ public class PersonDaoImpl extends BaseDAOImpl implements PersonDao {
 
 	@Override
 	public List<Person> getPeopleByPersonIDs(List<Integer> personIDs) throws Exception {
-		List<Person> toReturn = null;
+		List<Person> toReturn = new ArrayList<>();
 		for(Integer perNum:personIDs) {
 			Person curPer = getPerson(perNum);
 			if(curPer!=null) {
@@ -120,13 +120,13 @@ public class PersonDaoImpl extends BaseDAOImpl implements PersonDao {
 	
 	@Override
 	public boolean insertPerson(Person input) throws Exception {
-		List<Person> aMap = getAllPeople();
-	    for(Person entity:aMap) {
-	    	if(entity.getAddressID().equals(input.getAddressID()))
-	    		if(entity.getFname().equals(input.getFname()))
-	    			if(entity.getLname().equals(input.getLname()))
-	    				{ System.out.println("Duplicate"); return false; }
-	    }
+//		List<Person> aMap = getAllPeople();
+//	    for(Person entity:aMap) {
+//	    	if(entity.getAddressID().equals(input.getAddressID()))
+//	    		if(entity.getFname().equals(input.getFname()))
+//	    			if(entity.getLname().equals(input.getLname()))
+//	    				{ System.out.println("Duplicate"); return false; }
+//	    }
 	    return insertIt("Person",input,Person.lookup);
 	}
 

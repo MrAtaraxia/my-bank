@@ -28,6 +28,7 @@ public class Username {
 	
 	public Username(Integer id) {
 		this.setId(id);
+		this.setUType(UType.NONE);
 	}
 	
 	public Integer getId() {

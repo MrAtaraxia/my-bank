@@ -40,6 +40,10 @@ public class Client2 {
 	        String response = client.sendMessage(theInput);
 	        //assertEquals("hello client", response);
 	    	System.out.println("SERVERS RESPONSE" + response);
+	    	if(theInput.equals("ABC")){
+	    		break;
+	    	}
         }
+        scanner.close();
     }
 }

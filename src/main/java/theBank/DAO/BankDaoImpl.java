@@ -34,7 +34,7 @@ public class BankDaoImpl extends BaseDAOImpl implements BankDAO {
 	
 	@Override
 	public List<Bank> getAllBanks() throws Exception {
-		List<Bank> toReturn = null;
+		List<Bank> toReturn = new ArrayList<>();
 		for(var part:getAllIt(
 				"Bank", new Bank(), Bank.lookup).entrySet()) {
 			if(toReturn == null) { toReturn = new ArrayList<>(); }
@@ -45,7 +45,7 @@ public class BankDaoImpl extends BaseDAOImpl implements BankDAO {
 
 	@Override
 	public List<Bank> getAllActiveBanks() throws Exception {
-		List<Bank> toReturn = null;
+		List<Bank> toReturn = new ArrayList<>();
 		List<String> myListT = new ArrayList<>();
 		List<Object> myListV = new ArrayList<>();
 		myListT.add("active");
@@ -62,7 +62,7 @@ public class BankDaoImpl extends BaseDAOImpl implements BankDAO {
 
 	@Override
 	public List<Bank> getAllBanksByAddressID(int addressID) throws Exception {
-		List<Bank> toReturn = null;
+		List<Bank> toReturn = new ArrayList<>();
 		List<String> myListT = new ArrayList<>();
 		List<Object> myListV = new ArrayList<>();
 		myListT.add("active");

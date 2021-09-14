@@ -60,17 +60,18 @@ public class Main {
 	String PRESS_ANY = 			"Press Any Key to Continue:";
 	int minLength = 5;
 	int maxLength = 50;
-	protected BankDAO bDao = new BankDaoImpl();
-	protected PersonDao pDao = new PersonDaoImpl();
-	protected UsernameDao uDao = new UsernameDaoImpl();
-	protected AddressDAO AdDao = new AddressDaoImpl();
-	protected AccountDao AcDao = new AccountDaoImpl();
-	protected AccountOwnerDao AoDao = new AccountOwnerDaoImpl();
-	protected TransactionDAO tDao = new TransactionDaoImpl();
+	protected BankDaoImpl bDao = new BankDaoImpl();
+	protected PersonDaoImpl pDao = new PersonDaoImpl();
+	protected UsernameDaoImpl uDao = new UsernameDaoImpl();
+	protected AddressDaoImpl AdDao = new AddressDaoImpl();
+	protected AccountDaoImpl AcDao = new AccountDaoImpl();
+	protected AccountOwnerDaoImpl AoDao = new AccountOwnerDaoImpl();
+	protected TransactionDaoImpl tDao = new TransactionDaoImpl();
 
 	Username currentUser = null;
 	Person currentPerson = null;
 	Bank currentBank = bDao.getBank(1);
+	Address CurAddr = AdDao.getAddress(3);
 	UType typeOfUser = UType.NONE;
 	public Scanner aScanner = null;
 	
@@ -267,7 +268,7 @@ public class Main {
 			if(theInput.equals(aUser.getId().toString())) {
 				System.out.print("USERID!"+aUser.getId());
 				if(!aUser.getId().equals(currentUser.getId())){
-					List<Account> tempAccounts = AcDao.getAccountsByAccountIDs(AoDao.getAllAccountIDsByAOs(AoDao.getAllActiveAOsByUserID(aUser.getId())));
+					List<Account> tempAccounts = AcDao.getAccountsByAccountIDs(AoDao.getAllAccountIDsByAOs(AoDao.getAllActiveAOsByPersonID(aUser.getPersonID())));
 					for(Account acc:tempAccounts) {
 						int auserAO = -1;
 						int currAO = -1;
@@ -335,7 +336,7 @@ public class Main {
 			return AcDao.getAllAccounts();
 		}
 		else if (currentUser.getUType().equals(UType.CUSTOMER)) {
-			return AcDao.getAccountsByAccountIDs(AoDao.getAllAccountIDsByAOs(AoDao.getAllAOsByUserID(currentUser.getId())));
+			return AcDao.getAccountsByAccountIDs(AoDao.getAllAccountIDsByAOs(AoDao.getAllActiveAOsByPersonID(currentUser.getPersonID())));
 		}
 		return null;
 	}
@@ -451,7 +452,7 @@ public class Main {
 			System.out.print("Which Account would you like to transfer to:\n");
 			toAcc = getAccount(tempAccounts);
 			while (true) {
-				System.out.print("How much would you like to transfer\nFROM:" + fromAcc.getId() + " BALANCE:" + fromAcc.getBalance()+ "\nTO:  " + toAcc.getId()+ " BALANCE:" + fromAcc.getBalance() + "\n");
+				System.out.print("How much would you like to transfer\nFROM:" + fromAcc.getId() + " BALANCE:" + fromAcc.getBalance()+ "\nTO:  " + toAcc.getId()+ " BALANCE:" + toAcc.getBalance() + "\n");
 				System.out.print("Q - To return to the menu.\n");
 				System.out.print("Input > ");
 				String theInput = aScanner.nextLine();
@@ -496,7 +497,7 @@ public class Main {
 	public int employMenu() throws Exception{
 		//logger.info("Employee Menu Start.");
 		if(!currentUser.getUType().equals(UType.EMPLOYEE)) {
-			//logger.warn("THIS SHOULD NOT HAPPEN!");
+			logger.warn("THIS SHOULD NOT HAPPEN!");
 			return -1;
 		}
 		boolean running = true;
@@ -537,7 +538,7 @@ public class Main {
 		Username tempUser = null;
 		tempUser = getCustomer("Account Information");
 		List<Account> tempAccounts = null;
-		tempAccounts = AcDao.getAccountsByAccountIDs(AoDao.getAllAccountIDsByAOs(AoDao.getAllAOsByUserID(tempUser.getPersonID())));
+		tempAccounts = AcDao.getAccountsByAccountIDs(AoDao.getAllAccountIDsByAOs(AoDao.getAllActiveAOsByPersonID(tempUser.getPersonID())));
 		if (tempAccounts != null) {
 			System.out.print("User " + tempUser.getId() + " has active accounts:\n");
 			for(Account acc:tempAccounts) {
@@ -602,7 +603,9 @@ public class Main {
 	
 	public void viewAllAccounts() throws Exception{
 		//logger.info("View All Accounts");
+		//System.out.println("VIEW ACCOUNTS####################");
 		List<Account> tempAccs = getAccounts();
+		//System.out.println("VIEW ACCOUNTS2####################");
 		for(Account acc : tempAccs) {
 			String owners = "";
 			for(Integer use : AoDao.getAllPersonIDsByAOs(AoDao.getAllActiveAOsByAccountID(acc.getId()))) {
@@ -736,20 +739,20 @@ public class Main {
 		//logger.info("Login Screen");
 		String username = inputChoice("Username");
 		String password = inputChoice("Password");
-		System.out.println("LOGIN PERSON");
+		//System.out.println("LOGIN PERSON");
 		Person tempPerson = pDao.getPersonByUserAndPass(username, password);
-		System.out.println("ID"+tempPerson.getId());
-		System.out.println("LOGIN USERNAME");
+		//System.out.println("PERSONID"+tempPerson.getId());
+		//System.out.println("LOGIN USERNAME");
 		Username tempUser = uDao.getUsernameByPersonID(tempPerson.getId());
-		
+		//System.out.println("USERID" + tempUser.getId());
 		if(tempPerson==null) {
 			System.out.print("That Username and Password combination does not work.\n");
 			System.out.print("Please try again later.\nThank you.");
 			return -1;
-		}
-		else {
+		} else {
 			currentUser = tempUser;
 			currentPerson = tempPerson;
+			
 			typeOfUser = tempUser.getUType();
 			return 1;
 		}
@@ -821,7 +824,7 @@ public class Main {
 					}
 					for(String choice : DEFAULT_YES_YES) {
 						if(confirm.equals(choice)) {
-							if(uDao.UsernameExists(choice)) {
+							if(uDao.UsernameExists(theInput)) {
 								System.out.print("Unfortunatly, that username is used by another.\nPlease try again.\n");
 								continue;
 							}
@@ -855,17 +858,23 @@ public class Main {
 						uPass = theInput;
 						Username use = new Username();
 						Person per = new Person();
-						per.setAddressID(1);
+						per.setAddressID(CurAddr.getId());
 						per.setEmail("default@account");
 						per.setFname("default");
 						per.setLname("account");
+						per.setWithdrawn(0.0);
 						pDao.insertPerson(per);
+						per = pDao.getPerson(per.getId());
+						System.out.println("NEW PERSON ID" + per.getId());
 						use.setUsername(uName);
 						use.setPass(uPass);
 						use.setPersonID(per.getId());
 						use.setUType(UType.CUSTOMER);
 						use.setActive(true);
 						uDao.insertUsername(use);
+						use = uDao.getUsername(use.getId());
+						System.out.println("NEW USER ID" + per.getId());
+						
 						currentUser=use;
 						currentPerson=per;
 						logger.info("User:" + currentUser.getUsername() + " - Registered a user.");
@@ -899,7 +908,6 @@ public class Main {
 		while(true) {
 			System.out.print(getInputText[0]);
 			// Outputs the predefined choices.
-			// TODO - CHECK CONDITIONS HERE! item.condition
 			for(Menu item: myMenu) {
 				System.out.print(item.number + getInputText[1] + item.name + getInputText[2]);
 			}

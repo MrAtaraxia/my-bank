@@ -14,8 +14,9 @@ public class UsernameDaoImpl extends BaseDAOImpl implements UsernameDao {
 		List<Object> myListV = new ArrayList<>();
 		myListT.add("id");
 		myListV.add(id);
+		String toSearch="id=?";
 		for(var part:getAllItWherePS(
-				"Username", new Username(), Username.lookup,"id = ?", myListV, myListT)) {
+				"Username", new Username(), Username.lookup,toSearch, myListV, myListT)) {
 			return (Username) part;
 		}
 		return null;
@@ -23,7 +24,7 @@ public class UsernameDaoImpl extends BaseDAOImpl implements UsernameDao {
 
 	@Override
 	public List<Username> getAllUsernames() throws Exception {
-		List<Username> toReturn = null;
+		List<Username> toReturn = new ArrayList<>();
 		for(var part:getAllIt(
 				"Username", new Username(), Username.lookup).entrySet()) {
 			if(toReturn == null) { toReturn = new ArrayList<>(); }
@@ -34,30 +35,41 @@ public class UsernameDaoImpl extends BaseDAOImpl implements UsernameDao {
 
 	@Override
 	public List<Username> getAllActiveUsernames() throws Exception {
-		List<Username> toReturn = null;
+		//System.out.println("Get All Active Usernames Start");
+		List<Username> toReturn = new ArrayList<>();
 		List<String> myListT = new ArrayList<>();
 		List<Object> myListV = new ArrayList<>();
 		myListT.add("active");
 		myListV.add(true);
+		String toSearch="active=?";
+		//System.out.println("Get All Active Usernames Start");
+		
 		for(var part:getAllItWherePS(
-				"Username", new Username(), Username.lookup,"active=?", myListV, myListT)) {
+				
+				"Username", new Username(), Username.lookup,toSearch, myListV, myListT)) {
+			//System.out.println("ANY USERNAMES? " + part.toString());
+			
 			if(toReturn==null) {
 				toReturn=new ArrayList<>();
+				//System.out.println("FIX NULL");
 			}
-			toReturn.add((Username) part);
+			Username newUse = (Username)part;
+			//System.out.println("GET USER ID"+ newUse.getId() + " PersonID" + newUse.getPersonID());
+			toReturn.add(newUse);
 		}
 		return toReturn;
 	}
 
 	@Override
 	public List<Username> getAllUsernamesByType(UType utype) throws Exception {
-		List<Username> toReturn = null;
+		List<Username> toReturn = new ArrayList<>();
 		List<String> myListT = new ArrayList<>();
 		List<Object> myListV = new ArrayList<>();
 		myListT.add("utype");
 		myListV.add(utype);
+		String toSearch ="utype=?";
 		for(var part:getAllItWherePS(
-				"Username", new Username(), Username.lookup,"utype=?", myListV, myListT)) {
+				"Username", new Username(), Username.lookup,toSearch, myListV, myListT)) {
 			if(toReturn==null) { toReturn=new ArrayList<>(); }
 			toReturn.add((Username) part);
 		}
@@ -66,15 +78,16 @@ public class UsernameDaoImpl extends BaseDAOImpl implements UsernameDao {
 
 	@Override
 	public List<Username> getAllActiveUsernamesByType(UType utype) throws Exception {
-		List<Username> toReturn = null;
+		List<Username> toReturn = new ArrayList<>();
 		List<String> myListT = new ArrayList<>();
 		List<Object> myListV = new ArrayList<>();
 		myListT.add("active");
 		myListV.add(true);
 		myListT.add("utype");
 		myListV.add(utype);
+		String toSearch = "active=? AND utype=?";
 		for(var part:getAllItWherePS(
-				"Username", new Username(), Username.lookup,"active=? AND utype=?", myListV, myListT)) {
+				"Username", new Username(), Username.lookup, toSearch, myListV, myListT)) {
 			if(toReturn==null) { toReturn=new ArrayList<>(); }
 			toReturn.add((Username) part);
 		}
@@ -92,16 +105,24 @@ public class UsernameDaoImpl extends BaseDAOImpl implements UsernameDao {
 		return false;
 	}
 
+	@SuppressWarnings("deprecation")
 	@Override
-	public Username getUsernameByPersonID(Integer personID) throws Exception {
-		System.out.println("Start PersonID");
+	public Username getUsernameByPersonID(Integer personIDa) throws Exception {
+		Integer localPerson = new Integer(personIDa);
+		//System.out.println("#####  Start PersonID " + localPerson + " LOC ");
 		List<Username> allUsers = getAllActiveUsernames();
-		System.out.println("Mid PersonID");
+		//System.out.println("#####  Mid PersonID " + localPerson + " LOC " );
 		if(allUsers!=null) {
 			for(var aUser: allUsers) {
-				if(aUser.getPersonID() == (personID)) { return aUser; }
+				//System.out.println(aUser + " ID " + aUser.getPersonID());
+				if(aUser!=null) {
+					if(aUser.getPersonID().equals(localPerson)) { 
+						//System.out.println(aUser);
+						return aUser; }
+				}
 			}
 		}
+		//System.out.println("#####  PersonID IS NULL");
 		return null;
 	}
 	
@@ -119,12 +140,12 @@ public class UsernameDaoImpl extends BaseDAOImpl implements UsernameDao {
 
 	@Override
 	public boolean insertUsername(Username input) throws Exception {
-		List<Username> aMap = getAllUsernames();
-	    for(Username entity:aMap) {
-	    	if(entity.getUsername().equals(input.getUsername()))
-	    		if(entity.getPass().equals(input.getPass()))
-	    			{ System.out.println("Duplicate"); return false; }
-	    }
+//		List<Username> aMap = getAllUsernames();
+//	    for(Username entity:aMap) {
+//	    	if(entity.getUsername().equals(input.getUsername()))
+//	    		if(entity.getPass().equals(input.getPass()))
+//	    			{ System.out.println("Duplicate"); return false; }
+//	    }
 	    return insertIt("Username",input,Username.lookup);
 	}
 

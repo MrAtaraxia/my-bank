@@ -8,10 +8,7 @@ import oracle.jdbc.driver.OracleDriver;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
-//import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
  
 /**
  * Connect to Database

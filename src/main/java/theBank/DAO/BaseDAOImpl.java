@@ -47,7 +47,7 @@ public abstract class BaseDAOImpl {
 	
 	protected Map<Integer, Object> getAllItWhereOld(String str, Object o,  Map<String, Extractor> aLookup, String where) throws Exception {
 		Connection connection = ConnectionSingle.getConn();
-		System.out.println("Get all it WHERE");
+		//System.out.println("Get all it WHERE");
 	    try {
 	        Statement stmt = connection.createStatement();
 	        String query = "SELECT * FROM " + str + " WHERE " + where;
@@ -72,14 +72,14 @@ public abstract class BaseDAOImpl {
 	
 	protected List<Object> getAllItWherePS(String str, Object o,  Map<String, Extractor> aLookup, String where, List<Object> values, List<String> types) throws Exception {
 		Connection connection = ConnectionSingle.getConn();
-		System.out.println("Get all it WHERE");
+		//System.out.println("Get all it WHERE");
 	    try {
 	        String query = "SELECT * FROM " + str + " WHERE " + where;
-	        System.out.println(query);
+	        //System.out.println(query);
 	        PreparedStatement ps = connection.prepareStatement(query);
-	        System.out.println("AfterPS");
+	        //System.out.println("AfterPS");
 	        for(int i = 0; i < values.size();i++) {
-	        	System.out.println(i);
+	        	//System.out.println(i+"THE TYPE"+types.get(i));
 	        	if(aLookup.get(types.get(i)).gType.equalsIgnoreCase("Integer") || aLookup.get(types.get(i)).gType.equalsIgnoreCase("int")) {
 	        		ps.setInt(i+1, (Integer)(values.get(i)));
 	        	} else if(aLookup.get(types.get(i)).gType.equalsIgnoreCase("Double") || aLookup.get(types.get(i)).gType.equalsIgnoreCase("double")) {
@@ -106,9 +106,9 @@ public abstract class BaseDAOImpl {
 	        		ps.setString(i+1, ((UType)(values.get(i))).toString());
 	        	}
 	        }
-	        System.out.println("BeforeRS");
+	        //System.out.println("BeforeRS");
 	        ResultSet rs = ps.executeQuery();
-	        System.out.println("after RS");
+	        //System.out.println("after RS");
 	        List<Object> aMap = new ArrayList<>();
 	        Object alocal = null;
 	        while(rs.next()) {
@@ -130,7 +130,7 @@ public abstract class BaseDAOImpl {
 		//Class<?> cl = Class.forName(o.getClass().getName());
 		Constructor construct = o.getClass().getConstructor();
 		Object newO = o.getClass().cast(construct.newInstance());
-		System.out.println("ExtractIt START");
+		//System.out.println("ExtractIt START");
 		for(Entry<String, Extractor> curr:aLookup.entrySet()) {
 			Object toGet = null;
 			if(curr.getValue().sType.equalsIgnoreCase("Integer") || curr.getValue().sType.equalsIgnoreCase("int")) {
@@ -158,8 +158,8 @@ public abstract class BaseDAOImpl {
 			}else if(curr.getValue().sType.equalsIgnoreCase("TType")) {
 				toGet = TType.get(rs.getString(curr.getKey()));
 			}
-			System.out.println("Curr" + curr.getValue().name);
-			System.out.println("Curr" + curr.getValue().getter);
+			//System.out.println("Curr" + curr.getValue().name);
+			//System.out.println("Curr" + curr.getValue().getter);
 			curr.getValue().sMethod.invoke(newO, toGet);
 		}
 	    return newO;
@@ -191,18 +191,18 @@ public abstract class BaseDAOImpl {
 			sMeths.add(curr.getValue().gMethod);
 			sType.add(curr.getValue().gType);
 	    }
-	    System.out.println("Params Made");
+	    //System.out.println("Params Made");
 	    sParams = sParams.delete(sParams.lastIndexOf(","), sParams.length());
 	    sValues = sValues.delete(sValues.lastIndexOf(","), sValues.length());
 	    String query = begin.toString() + sParams.toString() + middle.toString() +
 	    		sValues.toString() + end.toString();
-	    System.out.println(query);
+	    //System.out.println(query);
 	    try {
 	    	PreparedStatement ps = connection.prepareStatement(query);
 	        for(int i = 0; i < sMeths.size(); i++ ) {
-	        	System.out.println(sMeths.get(i) + " " + sType.get(i) + " " + i + " "+ sMeths.size());
+	        	//System.out.println(sMeths.get(i) + " " + sType.get(i) + " " + i + " "+ sMeths.size());
 	        	if(sType.get(i).equalsIgnoreCase("Integer") || sType.get(i).equalsIgnoreCase("int")) {
-	        		System.out.println("ABC" + sMeths.get(i).getName()+ " " + sMeths.get(i).invoke(o));
+	        		//System.out.println("ABC" + sMeths.get(i).getName()+ " " + sMeths.get(i).invoke(o));
 	        		ps.setInt(i+1, (Integer) sMeths.get(i).invoke(o));
 	        	}else if(sType.get(i).equalsIgnoreCase("Double") || sType.get(i).equalsIgnoreCase("double")) {
 	        		ps.setDouble(i+1, (Double) sMeths.get(i).invoke(o));
@@ -246,6 +246,12 @@ public abstract class BaseDAOImpl {
 	    List<String>  sType = new ArrayList<>();
 	    for(Entry<String, Extractor> curr:aLookup.entrySet()) {
 	    	if(curr.getValue().name.equalsIgnoreCase("id")) {
+	    		continue;
+	    	}
+	    	if(curr.getValue().name.equalsIgnoreCase("created")) {
+	    		continue;
+	    	}
+	    	if(curr.getValue().name.equalsIgnoreCase("modified")) {
 	    		continue;
 	    	}
 			//System.out.println(curr.getValue().name);

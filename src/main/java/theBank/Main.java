@@ -1,12 +1,12 @@
 package theBank;
 import java.io.IOException;
-import java.util.HashSet;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
-import java.util.Set;
-
 import org.apache.logging.log4j.Logger;
 
 import theBank.accounts.*;
+import theBank.general.*;
 import theBank.DAO.*;
 import theBank.People.*;
 
@@ -34,9 +34,6 @@ public class Main {
 	public  String clearScreen = "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n";
 	public  String spacingOnScreen = "\n\n\n\n\n\n\n\n";
 
-	Person currentUser = null;
-	UType typeOfUser = UType.NONE;
-	public Scanner aScanner = null;
 	
 	Menu[] loginMenu = null;
 	Menu[] customerMenu = null;
@@ -63,15 +60,25 @@ public class Main {
 	String PRESS_ANY = 			"Press Any Key to Continue:";
 	int minLength = 5;
 	int maxLength = 50;
-	protected PersonDao uDao = new PersonDaoText();
-	protected AccountDao aDao = new AccountDaoText();
-	
+	protected BankDAO bDao = new BankDaoImpl();
+	protected PersonDao pDao = new PersonDaoImpl();
+	protected UsernameDao uDao = new UsernameDaoImpl();
+	protected AddressDAO AdDao = new AddressDaoImpl();
+	protected AccountDao AcDao = new AccountDaoImpl();
+	protected AccountOwnerDao AoDao = new AccountOwnerDaoImpl();
+	protected TransactionDAO tDao = new TransactionDaoImpl();
+
+	Username currentUser = null;
+	Person currentPerson = null;
+	Bank currentBank = bDao.getBank(1);
+	UType typeOfUser = UType.NONE;
+	public Scanner aScanner = null;
 	
 	public Main() throws Exception {
 		logger.trace("Constructor() start.");
 		
-		Set <Account> allAccounts= null;
-		allAccounts = aDao.getAllAccounts();
+		List<Account> allAccounts= null;
+		allAccounts = AcDao.getAllAccounts();
 		
 		int nextAcc = 0;
 		for(Account acc: allAccounts) {
@@ -81,9 +88,9 @@ public class Main {
 		}
 		
 		Account.nextId = nextAcc+1;
-		Set<Person> allUsers = new HashSet<Person>();
+		List<Person> allUsers = new ArrayList<>();
 
-		allUsers = uDao.getAllUsers();
+		allUsers = pDao.getAllPeople();
 		int nextUser = 0;
 		for(Person use: allUsers) {
 			if(nextUser < use.getId()) {
@@ -177,7 +184,7 @@ public class Main {
 
 	public int custMenu() throws Exception {
 		//logger.info("Enter Customer Menu.");
-		if(!currentUser.getType().equals(UType.CUSTOMER)) {
+		if(!currentUser.getUType().equals(UType.CUSTOMER)) {
 			//logger.warn("THIS SHOULD NOT HAPPEN!");
 			return -1;
 		}
@@ -215,12 +222,23 @@ public class Main {
 	public void applyOpenAccount() {
 		//logger.info("Enter Apply Open Account.");
 		//System.out.print(custMenuChoicesText[0]);
+		System.out.println("OPEN ACCOUNT1");
 		Account tempAcc = new Account();
-		Integer[] owners = {currentUser.getId()};
-		tempAcc.setType(AType.INDIVIDUAL);
-		tempAcc.setOwners(owners);
+		List<AccountOwner> AO = new ArrayList<>();
+		tempAcc.setAtype(AType.INDIVIDUAL);
+		tempAcc.setAstate(AState.PENDING);
+		tempAcc.setActive(true);
+		tempAcc.setBalance(0.0d);
+		tempAcc.setAccountNumber(tempAcc.getId());
+		tempAcc.setBankID(currentBank.getId());
+		AccountOwner newAO = new AccountOwner();
+		System.out.println("OPEN ACCOUNT2");
+		newAO.setAccountID(tempAcc.getId());
+		newAO.setPersonID(currentUser.getPersonID());
+		System.out.println("OPEN ACCOUNT3");
+		AO.add(newAO);
 		try {
-			if(aDao.insertAccount(tempAcc))
+			if(AcDao.insertAccount(tempAcc)!=null)
 			{
 				logger.info("User:" + currentUser.getId().toString() + " - Applied to open an account.");
 				System.out.print("You have been added to the list of users who want to add new accounts.\n");
@@ -245,37 +263,58 @@ public class Main {
 		System.out.print("Input > ");
 		theInput = aScanner.nextLine();
 		logger.info("User:" + currentUser.getId().toString() + " - Applied to open a joint account with:" + theInput);
-		for(Person aUser:uDao.getAllUsersByType(UType.CUSTOMER)) {
+		for(Username aUser:uDao.getAllUsernamesByType(UType.CUSTOMER)) {
 			if(theInput.equals(aUser.getId().toString())) {
 				System.out.print("USERID!"+aUser.getId());
 				if(!aUser.getId().equals(currentUser.getId())){
-					Set<Account> tempAccounts = aDao.getAccountsByUser(aUser.getId());
+					List<Account> tempAccounts = AcDao.getAccountsByAccountIDs(AoDao.getAllAccountIDsByAOs(AoDao.getAllActiveAOsByUserID(aUser.getId())));
 					for(Account acc:tempAccounts) {
-						if(acc.getOwners().length > 1 && acc.getOwners()[1].equals(currentUser.getId())) {
-							if(acc.getOwners()[0].equals(aUser.getId())) {
-								if(acc.getType()==AType.JOINT) {
-									if(acc.getEnabled()==true) {
-										System.out.print("You already have a joint account with that user!\n");
-										//logger.info("Already have a Joint Account.");
-										return false;
-									}
-									else {
-										acc.setEnabled(true);
-										aDao.updateAccount(acc);
+						int auserAO = -1;
+						int currAO = -1;
+						List<AccountOwner> curAOs= AoDao.getAllActiveAOsByAccountID(acc.getId());
+						if(curAOs.size() > 1) {
+							for(int i = 0; i < curAOs.size();i++) {
+								if(curAOs.get(i).getPersonID().equals(aUser.getPersonID())) {
+									auserAO=i;
+								}
+								if(curAOs.get(i).getPersonID().equals(currentPerson.getId())) {
+									currAO=i;
+								}
+							}
+							if(auserAO >= 0 && currAO >= 0) {
+								if(acc.getAstate().equals(AState.ACTIVE)) {
+									System.out.print("You already have a joint account with that user!\n");
+									return false;
+								}
+								else if(acc.getAstate().equals(AState.AWAITING_CONFIRMATION)){
+									if(curAOs.get(currAO).getOtype().equals(OType.NEEDSAPPROVAL)){
+										curAOs.get(currAO).setOtype(OType.APPROVED);
+										acc.setAstate(AState.PENDING);
 										System.out.print("You have successfully applied for a joint account with that user!\n");
-										//logger.info("Confirmed Applying For a Joint Account.");
 										return true;
+									}else {
+										System.out.print("You are currently waiting for the other user to confirm the account!\n");
+										return false;
 									}
 								}
 							}
 						}
 					}
-					Integer[] tempInt = {currentUser.getId(), aUser.getId()};
+					AccountOwner newOwn1 = new AccountOwner();
+					AccountOwner newOwn2 = new AccountOwner();
+					newOwn1.setPersonID(currentUser.getId());
+					newOwn2.setPersonID(aUser.getId());
+					newOwn1.setOtype(OType.APPROVED);
+					newOwn2.setOtype(OType.NEEDSAPPROVAL);
 					Account tempAcc = new Account();
-					tempAcc.setOwners(tempInt);
-					tempAcc.setType(AType.JOINT);
-					tempAcc.setEnabled(false);
-					aDao.insertAccount(tempAcc);
+					tempAcc.setAtype(AType.JOINT);
+					tempAcc.setActive(true);
+					tempAcc.setAstate(AState.AWAITING_CONFIRMATION);
+					tempAcc = AcDao.insertAccount(tempAcc);
+					newOwn1.setAccountID(tempAcc.getId());
+					newOwn2.setAccountID(tempAcc.getId());
+					AoDao.insertAO(newOwn1);
+					AoDao.insertAO(newOwn2);
 					System.out.print("SUCCESS\n");
 					System.out.print("Once the person whose UserID you typed, tries to open an account with your id.\n");
 					System.out.print("We will send it to our employees to approve and add it to your account.\n");
@@ -290,13 +329,13 @@ public class Main {
 		return false;
 	}
 	
-	public Set<Account> getAccounts() throws Exception{
+	public List<Account> getAccounts() throws Exception{
 		//logger.info("getAccounts Start");
-		if(currentUser.getType().equals(UType.ADMIN)) {
-			return aDao.getAllAccounts();
+		if(currentUser.getUType().equals(UType.ADMIN)) {
+			return AcDao.getAllAccounts();
 		}
-		else if (currentUser.getType().equals(UType.CUSTOMER)) {
-			return aDao.getActiveAccountsByUser(currentUser.getId());
+		else if (currentUser.getUType().equals(UType.CUSTOMER)) {
+			return AcDao.getAccountsByAccountIDs(AoDao.getAllAccountIDsByAOs(AoDao.getAllAOsByUserID(currentUser.getId())));
 		}
 		return null;
 	}
@@ -304,7 +343,7 @@ public class Main {
 	public void withdrawFromAccount() throws Exception {
 		//logger.info("Withdraw From Account Start.");
 		System.out.print("Which Account would you like to withdraw from:\n");
-		Set<Account> tempAccounts = getAccounts();
+		List<Account> tempAccounts = getAccounts();
 		Account tempAccount = null;
 		if(tempAccounts != null) {
 			tempAccount = getAccount(tempAccounts);
@@ -329,7 +368,7 @@ public class Main {
 					System.out.print("You are not allowed to withdraw more than you have in the account.\nPlease try again.\n");
 					continue;
 				}
-				else if(wAmount + currentUser.getWithdrawn() > allowed_per_day) {
+				else if(wAmount + pDao.getPerson(currentUser.getPersonID()).getWithdrawn() > allowed_per_day) {
 					System.out.print("You are not allowed to withdraw that much today.\nPlease decrease the amount or try again tomorrow.\n");
 					continue;
 				}
@@ -337,7 +376,7 @@ public class Main {
 					System.out.print("You have withdrawn " + wAmount + " from account " + tempAccount.getId() + "\n");
 					logger.info("Acc:" + tempAccount.getId() + " old balance " + tempAccount.getBalance());
 					tempAccount.setBalance(tempAccount.getBalance()-wAmount);
-					aDao.updateAccount(tempAccount);
+					AcDao.updateAccount(tempAccount);
 					logger.info("User:" + currentUser.getId().toString() + " - withdrew " + wAmount + " from " + tempAccount.getId());
 					logger.info("Acc:" + tempAccount.getId() + " new balance " + tempAccount.getBalance());
 					System.out.print("Account " + tempAccount.getId() + " has a new balance of " + tempAccount.getBalance() + "\n");
@@ -355,7 +394,7 @@ public class Main {
 	public void depositToAccount() throws Exception {
 		//logger.info("Deposit To Account Start.");
 		System.out.print("Which Account would you like to deposit to:\n");
-		Set<Account> tempAccounts = getAccounts();
+		List<Account> tempAccounts = getAccounts();
 		Account tempAccount = null;
 		if(tempAccounts != null) {
 			tempAccount = getAccount(tempAccounts);
@@ -381,7 +420,7 @@ public class Main {
 					System.out.print("You have deposited " + wAmount + " to account " + tempAccount.getId() + "\n");
 					logger.info("Acc:" + tempAccount.getId() + " old balance " + tempAccount.getBalance());
 					tempAccount.setBalance(tempAccount.getBalance()+wAmount);
-					aDao.updateAccount(tempAccount);
+					AcDao.updateAccount(tempAccount);
 					logger.info("User:" + currentUser.getId().toString() + "-deposited-" + wAmount + "-into-" + tempAccount.getId());
 					logger.info("Acc:" + tempAccount.getId() + " new balance " + tempAccount.getBalance());
 					System.out.print("Account " + tempAccount.getId() + " has a new balance of " + tempAccount.getBalance() + "\n");
@@ -399,7 +438,7 @@ public class Main {
 	public void transferBetweenAccounts() throws Exception{
 		//logger.info("Transfer Between Accounts Start.");
 		while(true) {
-			Set<Account> tempAccounts = getAccounts();
+			List<Account> tempAccounts = getAccounts();
 			if(tempAccounts == null || tempAccounts.size()<2) {
 				System.out.print("You need at least 2 accounts to transfer between them.\n");
 				break;
@@ -435,8 +474,8 @@ public class Main {
 						logger.info("Acc:" + toAcc.getId() + " old balance " + toAcc.getBalance());
 						fromAcc.setBalance(fromAcc.getBalance()-wAmount);
 						toAcc.setBalance(toAcc.getBalance()+wAmount);
-						aDao.updateAccount(fromAcc);
-						aDao.updateAccount(toAcc);
+						AcDao.updateAccount(fromAcc);
+						AcDao.updateAccount(toAcc);
 						logger.info("User:" + currentUser.getId().toString() + "-transfered-" + wAmount + "-from-" + fromAcc.getId()+ "-to-" + toAcc.getId());
 						logger.info("Acc:" + fromAcc.getId() + " new balance " + fromAcc.getBalance());
 						logger.info("Acc:" + toAcc.getId() + " new balance " + toAcc.getBalance());
@@ -454,10 +493,9 @@ public class Main {
 		}
 	}
 	
-
 	public int employMenu() throws Exception{
 		//logger.info("Employee Menu Start.");
-		if(!currentUser.getType().equals(UType.EMPLOYEE)) {
+		if(!currentUser.getUType().equals(UType.EMPLOYEE)) {
 			//logger.warn("THIS SHOULD NOT HAPPEN!");
 			return -1;
 		}
@@ -484,7 +522,6 @@ public class Main {
 		}
 		return 0;
 	}
-	
 
 	public int isTestWorking(String s) {
 		//logger.info("TESTING if tests work!");
@@ -497,10 +534,10 @@ public class Main {
 	
 	public void viewCustAccInfo() throws Exception {
 		//logger.info("View Customer Account Info");
-		Person tempUser = null;
+		Username tempUser = null;
 		tempUser = getCustomer("Account Information");
-		Set<Account> tempAccounts = null;
-		tempAccounts = aDao.getActiveAccountsByUser(tempUser.getId());
+		List<Account> tempAccounts = null;
+		tempAccounts = AcDao.getAccountsByAccountIDs(AoDao.getAllAccountIDsByAOs(AoDao.getAllAOsByUserID(tempUser.getPersonID())));
 		if (tempAccounts != null) {
 			System.out.print("User " + tempUser.getId() + " has active accounts:\n");
 			for(Account acc:tempAccounts) {
@@ -515,21 +552,20 @@ public class Main {
 	
 	public void viewCustPersonalInfo() throws Exception {
 		//logger.info("View Customer Personal Information");
-		Person tempUser = null;
-		tempUser = getCustomer("Personal Information");
+		Username tempUser = getCustomer("Personal Information");
+		Person tempPerson = pDao.getPerson(tempUser.getPersonID());
 		if(tempUser!=null) {
 			System.out.print("User " + tempUser.getId() + "\n");
-			System.out.print("First Name: " + tempUser.getFname() + "\n");
-			System.out.print("Last Name:  " + tempUser.getLname() + "\n");
-			System.out.print("Email:      " + tempUser.getEmail() + "\n");
+			System.out.print("First Name: " + tempPerson.getFname() + "\n");
+			System.out.print("Last Name:  " + tempPerson.getLname() + "\n");
+			System.out.print("Email:      " + tempPerson.getEmail() + "\n");
 			System.out.print("Username:   " + tempUser.getUsername() + "\n");
 		}
 	}
 	
-
 	public int adminMenu() throws Exception {
 		//logger.info("Admin Menu Start");
-		if(!currentUser.getType().equals(UType.ADMIN)) {
+		if(!currentUser.getUType().equals(UType.ADMIN)) {
 			return -1;
 		}
 		boolean running = true;
@@ -564,30 +600,30 @@ public class Main {
 		return 0;
 	}
 	
-
 	public void viewAllAccounts() throws Exception{
 		//logger.info("View All Accounts");
-		Set<Account> tempAccs = getAccounts();
+		List<Account> tempAccs = getAccounts();
 		for(Account acc : tempAccs) {
 			String owners = "";
-			for(Integer use : acc.getOwners()) {
+			for(Integer use : AoDao.getAllPersonIDsByAOs(AoDao.getAllActiveAOsByAccountID(acc.getId()))) {
 				owners += use.toString();
 			}
 			System.out.print("ID:" + acc.getId() + " Balance" + acc.getBalance());
-			System.out.print(" Type:" + acc.getType() + " Owners:" + owners + "\n");
+			System.out.print(" Type:" + acc.getAtype() + " Owners:" + owners + "\n");
 		}
 	}
+	
 	public void cancelAccount() throws Exception {
 		//logger.info("Cancel Account");
-		if(currentUser.getType().equals(UType.ADMIN))
+		if(currentUser.getUType().equals(UType.ADMIN))
 		{
-			Set<Account> accounts = getAccounts();
+			List<Account> accounts = getAccounts();
 			boolean exit = false;
 			if(accounts!=null) {
 				System.out.print("Select an account to cancel:\n");
 				Account acc = getAccount(accounts);
 				String owners = "";
-				for(Integer i:acc.getOwners()) {
+				for(Integer i:AoDao.getAllPersonIDsByAOs(AoDao.getAllActiveAOsByAccountID(acc.getId()))) {
 					owners += i.toString() + " ";
 				}
 				String theInput = "";
@@ -610,7 +646,7 @@ public class Main {
 					for(String check: CONFIRM) {
 						if(theInput.equalsIgnoreCase(check)){
 							System.out.print("Canceling account:" + acc.getId()+ "\n");
-							aDao.deleteAccount(acc.getId());
+							AcDao.CancelAccount(acc.getId());
 							exit = true;
 							break;
 						}
@@ -626,15 +662,15 @@ public class Main {
 	public void approveDeny() throws Exception {
 		//logger.info("Approve/Deny");
 		boolean exit = false;
-		if((currentUser.getType().equals(UType.ADMIN)||
-				currentUser.getType().equals(UType.EMPLOYEE)))
+		if((currentUser.getUType().equals(UType.ADMIN)||
+				currentUser.getUType().equals(UType.EMPLOYEE)))
 		{
-			Set<Account> accounts = aDao.getAllNeedApprovalAccounts();
+			List<Account> accounts = AcDao.getAccountsByState(AState.PENDING);
 			if(accounts!=null) {
 				System.out.print("Select an account to approve or deny:\n");
 				Account acc = getAccount(accounts);
 				String owners = "";
-				for(Integer i:acc.getOwners()) {
+				for(Integer i:AoDao.getAllPersonIDsByAOs(AoDao.getAllActiveAOsByAccountID(acc.getId()))) {
 					owners += i.toString() + " ";
 				}
 				String theInput = "";
@@ -656,8 +692,8 @@ public class Main {
 					for(String check: APPROVE) {
 						if(theInput.equalsIgnoreCase(check)){
 							System.out.print("Approving the account.\n");
-							acc.setApproved(true, currentUser.getType());
-							aDao.updateAccount(acc);
+							acc.setAstate(AState.ACTIVE);
+							AcDao.updateAccount(acc);
 							exit = true;
 							break;
 						}
@@ -668,7 +704,7 @@ public class Main {
 					for(String check: DENY) {
 						if(theInput.equalsIgnoreCase(check)){
 							System.out.print("Denying the account.\n");
-							aDao.deleteAccount(acc.getId());
+							AcDao.deactivateAccount(acc.getId());
 							exit=true;
 							break;
 						}
@@ -687,6 +723,7 @@ public class Main {
 	String[] splashScreenText = {
 			new StringBuilder(clearScreen+WELCOME_MESSAGE+spacingOnScreen+PRESS_ANY).toString(),
 			clearScreen};
+	
 	public void splashScreen() {
 		//logger.info("Splash Screen");
 		System.out.print(splashScreenText[0]);
@@ -694,19 +731,26 @@ public class Main {
 		System.out.print(splashScreenText[1]);
 	}
 	
+	@SuppressWarnings("unused")
 	public int loginScreen() throws Exception {
 		//logger.info("Login Screen");
 		String username = inputChoice("Username");
 		String password = inputChoice("Password");
-		Person tempUser = uDao.getUserByUserNameAndPassword(username, password);
-		if(tempUser==null) {
+		System.out.println("LOGIN PERSON");
+		Person tempPerson = pDao.getPersonByUserAndPass(username, password);
+		System.out.println("ID"+tempPerson.getId());
+		System.out.println("LOGIN USERNAME");
+		Username tempUser = uDao.getUsernameByPersonID(tempPerson.getId());
+		
+		if(tempPerson==null) {
 			System.out.print("That Username and Password combination does not work.\n");
 			System.out.print("Please try again later.\nThank you.");
 			return -1;
 		}
 		else {
 			currentUser = tempUser;
-			typeOfUser = tempUser.getType();
+			currentPerson = tempPerson;
+			typeOfUser = tempUser.getUType();
 			return 1;
 		}
 	}
@@ -715,6 +759,7 @@ public class Main {
 			"Input ",
 			" : ",
 			clearScreen};
+	
 	public String inputChoice(String to_input) {
 		//logger.info("Input Choice");
 		String to_return;
@@ -744,6 +789,7 @@ public class Main {
 			"CREATING USER: ",
 			":",
 			"\n"};
+	
 	public int registerCustomer() throws Exception {
 		//logger.info("Register Customer");
 		boolean running = true;
@@ -775,7 +821,7 @@ public class Main {
 					}
 					for(String choice : DEFAULT_YES_YES) {
 						if(confirm.equals(choice)) {
-							if(uDao.userExists(choice)) {
+							if(uDao.UsernameExists(choice)) {
 								System.out.print("Unfortunatly, that username is used by another.\nPlease try again.\n");
 								continue;
 							}
@@ -807,12 +853,21 @@ public class Main {
 					confirm = aScanner.nextLine();
 					if(confirm.equals(theInput)) {
 						uPass = theInput;
-						Person use = new Person();
-						use.setFname("temp");
-						use.setLname("acc");
+						Username use = new Username();
+						Person per = new Person();
+						per.setAddressID(1);
+						per.setEmail("default@account");
+						per.setFname("default");
+						per.setLname("account");
+						pDao.insertPerson(per);
 						use.setUsername(uName);
 						use.setPass(uPass);
-						uDao.insertUser(use);
+						use.setPersonID(per.getId());
+						use.setUType(UType.CUSTOMER);
+						use.setActive(true);
+						uDao.insertUsername(use);
+						currentUser=use;
+						currentPerson=per;
 						logger.info("User:" + currentUser.getUsername() + " - Registered a user.");
 						return 1;
 					}
@@ -836,6 +891,7 @@ public class Main {
 			"\n",
 			"Input > ",
 			"Please try again.\n"};
+	
 	public String getInput(Menu[] myMenu) {
 		//logger.info("Get Input");
 		String myInput;
@@ -863,20 +919,20 @@ public class Main {
 		}
 	}
 	
-	public Account getAccount(Set<Account> accts) {
+	public Account getAccount(List<Account> accts) {
 		//logger.info("Get Account");
 		String myInput;
 		while(true) {
 			System.out.print(getInputText[0]);
 			for(Account item: accts) {
-				System.out.print(item.getId() + ":" + item.getType() + ":" + item.getBalance() + "\n");
+				System.out.print(item.getId() + ":" + item.getAtype() + ":" + item.getBalance() + "\n");
 			}
 			System.out.print(getInputText[3]);
 			//Get the next line of input
 			//BLOCK aScanner = new Scanner();
 			myInput = aScanner.nextLine();
 			for(Account item: accts) {
-				if(myInput.equalsIgnoreCase(item.getId().toString())) {
+				if(myInput.equalsIgnoreCase(String.valueOf(item.getId()))) {
 					return item;
 				}
 			}
@@ -884,14 +940,14 @@ public class Main {
 		}
 	}
 	
-	public Person getCustomer(String thing) throws Exception {
+	public Username getCustomer(String thing) throws Exception {
 		//logger.info("Get Customer");
-		Set<Person> persons = uDao.getAllUsersByType(UType.CUSTOMER);
+		List<Username> persons = uDao.getAllUsernamesByType(UType.CUSTOMER);
 		String myInput;
 		while(true) {
 			System.out.print("Please input the UserID of the user whose " + thing + " you would like to view.\n");
 			myInput = aScanner.nextLine();
-			for(Person use: persons) {
+			for(Username use: persons) {
 				if(myInput.equalsIgnoreCase(use.getId().toString())) {
 					return use;
 				}

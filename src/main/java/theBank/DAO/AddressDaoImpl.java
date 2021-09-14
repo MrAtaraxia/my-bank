@@ -82,6 +82,7 @@ public class AddressDaoImpl implements AddressDAO {
 	    try {
 	        Statement stmt = connection.createStatement();
 	        String query = "SELECT * FROM address WHERE active = true";
+	        
 	        ResultSet rs = stmt.executeQuery(query);
 	        Map<Integer, Address> addrs = new HashMap<Integer, Address>();
 	        while(rs.next()) {

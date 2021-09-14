@@ -6,19 +6,21 @@ import theBank.general.Address;
 public class Business {
 	private static int nextId = 1;
 	private int id;
+	private boolean active = true;
 	Person owner;
 	String name;
 	int EIN;
-	String type;
+	BType btype;
 	Address address;
+	
+	public Business() {
+		setId(nextId);
+	}
 	
 	public int getId() {
 		return id;
 	}
 
-	public boolean setId() {
-		return setId(nextId);
-	}
 	
 	public boolean setId(int id) {
 		if(id <=0) {
@@ -29,5 +31,13 @@ public class Business {
 		}
 		this.id = id;
 		return true;
+	}
+
+	public boolean getActive() {
+		return active;
+	}
+
+	public void setActive(boolean active) {
+		this.active = active;
 	}
 }

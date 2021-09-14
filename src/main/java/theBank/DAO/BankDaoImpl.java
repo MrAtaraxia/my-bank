@@ -1,70 +1,88 @@
 package theBank.DAO;
 
-import java.util.HashMap;
-import java.util.Map;
-
+import java.util.ArrayList;
+import java.util.List;
 import theBank.general.Bank;
 
 public class BankDaoImpl extends BaseDAOImpl implements BankDAO {
 	
 	@Override
 	public Bank getBank(int id) throws Exception {
-		for(var part:getAllItWhere(
-				"Bank", new Bank(), Bank.lookup,"id="+id).entrySet()) {
-			return (Bank) part.getValue();
+		List<String> myListT = new ArrayList<>();
+		List<Object> myListV = new ArrayList<>();
+		myListT.add("id");
+		myListV.add(id);
+		for(var part:getAllItWherePS(
+				"Bank", new Bank(), Bank.lookup,"id = ?", myListV, myListT)) {
+			return (Bank) part;
 		}
 		return null;
 	}
 
 	@Override
 	public Bank getBankByRouting(String routing) throws Exception {
-		for(var part:getAllItWhere(
-				"Bank", new Bank(), Bank.lookup,"routing="+routing).entrySet()) {
-			return (Bank) part.getValue();
+		List<String> myListT = new ArrayList<>();
+		List<Object> myListV = new ArrayList<>();
+		myListT.add("routing");
+		myListV.add(routing);
+		for(var part:getAllItWherePS(
+				"Bank", new Bank(), Bank.lookup,"routing=?", myListV, myListT)) {
+			return (Bank) part;
 		}
 		return null;
 	}
 	
 	@Override
-	public Map<Integer, Bank> getAllBanks() throws Exception {
-		Map<Integer, Bank> toReturn = null;
+	public List<Bank> getAllBanks() throws Exception {
+		List<Bank> toReturn = null;
 		for(var part:getAllIt(
 				"Bank", new Bank(), Bank.lookup).entrySet()) {
-			if(toReturn == null) { toReturn = new HashMap<>(); }
-			toReturn.put(part.getKey(), (Bank) part.getValue());
+			if(toReturn == null) { toReturn = new ArrayList<>(); }
+			toReturn.add((Bank) part.getValue());
 		}
 		return toReturn;
 	}
 
 	@Override
-	public Map<Integer, Bank> getAllActiveBanks() throws Exception {
-		Map<Integer, Bank> toReturn = null;
-		for(var part:getAllItWhere(
-				"Bank", new Bank(), Bank.lookup,"active=true"
-				).entrySet()) {
-			if(toReturn == null) { toReturn = new HashMap<>(); }
-			toReturn.put(part.getKey(), (Bank) part.getValue());
+	public List<Bank> getAllActiveBanks() throws Exception {
+		List<Bank> toReturn = null;
+		List<String> myListT = new ArrayList<>();
+		List<Object> myListV = new ArrayList<>();
+		myListT.add("active");
+		myListV.add(true);
+		for(var part:getAllItWherePS(
+				"Bank", new Bank(), Bank.lookup,"active=?", myListV, myListT)) {
+			if(toReturn==null) {
+				toReturn=new ArrayList<>();
+			}
+			toReturn.add((Bank) part);
 		}
 		return toReturn;
 	}
 
 	@Override
-	public Map<Integer, Bank> getAllBanksByAddressID(int addressID) throws Exception {
-		Map<Integer, Bank> toReturn = null;
-		//System.out.println("By AddressID");
-		for(var part:getAllItWhere(
-				"Bank", new Bank(), Bank.lookup,"active=true AND addressID=" + addressID
-				).entrySet()) {
-			if(toReturn == null) { toReturn = new HashMap<>(); }
-			toReturn.put(part.getKey(), (Bank) part.getValue());
+	public List<Bank> getAllBanksByAddressID(int addressID) throws Exception {
+		List<Bank> toReturn = null;
+		List<String> myListT = new ArrayList<>();
+		List<Object> myListV = new ArrayList<>();
+		myListT.add("active");
+		myListV.add(true);
+		myListT.add("addressID");
+		myListV.add(addressID);
+		for(var part:getAllItWherePS(
+				"Bank", new Bank(), Bank.lookup,"active=? AND addressId=?", myListV, myListT)) {
+			if(toReturn==null) {
+				toReturn=new ArrayList<>();
+			}
+			toReturn.add((Bank) part);
 		}
 		return toReturn;
 	}
 
 	@Override
 	public boolean insertBank(Bank input) throws Exception {
-	    Map<Integer, Bank> aMap = getAllBanks();
-	    for(Bank entity:aMap.values()) {
+	    List<Bank> aMap = getAllBanks();
+	    for(Bank entity:aMap) {
 	    	if(entity.getAddressID().equals(input.getAddressID()))
 	    		if(entity.getName().equals(input.getName()))
 	    			if(entity.getRouting().equals(input.getRouting()))
@@ -96,7 +114,7 @@ public class BankDaoImpl extends BaseDAOImpl implements BankDAO {
 	public static void main(String[] args) throws Exception {
 		BankDaoImpl bDao = new BankDaoImpl();
 		try {
-		Bank myBank = new Bank();
+			Bank myBank = new Bank();
 //		Class aclass = Bank.class;
 //		Method[] methos = aclass.getMethods();
 //		Field[] theFields = aclass.getFields();
@@ -105,29 +123,16 @@ public class BankDaoImpl extends BaseDAOImpl implements BankDAO {
 //		}
 		//bDao.getIt("bank",5);
 		
-		myBank.setName("BABank");
-		myBank.setAddressID(1);
-		myBank.setRouting("232288899");
-		myBank.setTotalFunds(0.0d);
-		System.out.println("HERE?");
-		myBank.setId(5);
-		
-		System.out.println("HERE?ABC" + myBank.getAddressID());
-		System.out.println("AGAIN!");
-		Map<Integer, Bank> theBanks = bDao.getAllBanksByAddressID(1);
-		for(var eBank:theBanks.entrySet()) {
-			myBank = eBank.getValue();
-			System.out.println(eBank.getValue().getName() + " " + eBank.getValue().getId());
-			break;
-		}
-		myBank.setName("NEW NAME");
-		bDao.activateBank(myBank.getId());
-		bDao.deactivateBank(myBank.getId());
-		//bDao.insertBank(myBank);
-		//bDao.activateIt(1,myBank, Bank.lookup);
+			myBank = bDao.getBank(1);
+			System.out.println("HERE?"+ myBank.getName());
+			List<Bank> newB = bDao.getAllActiveBanks();
+			newB.forEach(abc -> System.out.println(abc.getName()));
+			newB = bDao.getAllBanksByAddressID(1);
+			newB.forEach(abc -> System.out.println(abc.getName()));
+			System.out.println("HERE?"+ myBank.getName());
+
 		} catch(Exception e) {
 			System.out.println(e);
 		}
 	}
-
 }

@@ -10,14 +10,18 @@ public class Address {
 	private String city;
 
 
+	public Address() {
+		this(nextId);
+	}
+	
+	public Address(Integer id) {
+		this.setId(id);
+	}
+	
 	public int getId() {
 		return id;
 	}
 
-	public boolean setId() {
-		return setId(nextId);
-	}
-	
 	public boolean setId(int id) {
 		if(id <=0) {
 			return false;

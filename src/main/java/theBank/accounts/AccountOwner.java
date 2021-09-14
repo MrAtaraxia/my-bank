@@ -1,6 +1,5 @@
 package theBank.accounts;
 
-import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.time.LocalDateTime;
@@ -10,143 +9,67 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-//import org.apache.logging.log4j.Logger;
-//import org.apache.logging.log4j.LogManager;
-
 import theBank.general.Extractor;
 
-/**
- * Account Class
- * @author w3
- */
-
-public class Account implements Serializable {
-	//private static final Logger logger = LogManager.getLogger(Account.class);
-
-	public static Integer nextId = 1;
-	private static final long serialVersionUID = -6579968071499579017L;
+public class AccountOwner {
+	public static Integer nextId=1;
 	private Integer id;
-	private boolean active;
-	private Integer accountNumber;
-	private Integer bankID;
-	private Double balance = 0.0;
-	//private Integer[] owners;
-	private AState astate;
-	private AType atype;
+	private Boolean active = true;
+	private Integer accountID;
+	private Integer personID;
+	private OType otype;
 	private LocalDateTime created;
 	private LocalDateTime modified;
 	
-	
-	public Account(){
-		this.id = nextId;
-		this.balance = 0.0d;
-		this.atype = AType.INDIVIDUAL;
-		nextId++;
+	public AccountOwner() {
+		setId(nextId);
 	}
 	
-	Account(Integer id, AType atype){
-		this.id = id;
-		//this.owners = owners;
-		this.balance = 0.0d;
-		this.atype = atype;
-	}
-	
-	public int getId() {
+	public Integer getId() {
 		return id;
 	}
-//
-//	public boolean setId() {
-//		return setId(nextId);
-//	}
 	
-	public boolean setId(int id) {
-		if(id <=0) {
-			return false;
-		}
+	public void setId(Integer id) {
 		if(id >= nextId) {
-			nextId = id+1;
+			nextId=id;
 		}
 		this.id = id;
-		return true;
 	}
-
-	public Double getBalance() {
-		return balance;
+	
+	public Boolean getActive() {
+		return active;
 	}
-
-	public boolean setBalance(Double balance) {
-		if(balance < 0) {
-			return false;
-		}
-		this.balance = balance;
-		return true;
+	public void setActive(Boolean active) {
+		this.active = active;
 	}
-
-//	public Integer[] getOwners() {
-//		return owners;
-//	}
-//
-//	public void setOwners(Integer[] owners) {
-//		this.owners = owners;
-//	}
-
-
-	public AState getAstate() {
-		return astate;
+	
+	public Integer getAccountID() {
+		return accountID;
 	}
-
-	public void setAstate(AState astate) {
-		this.astate = astate;
+	public void setAccountID(Integer accountID) {
+		this.accountID = accountID;
 	}
-
+	
+	public Integer getPersonID() {
+		return personID;
+	}
+	public void setPersonID(Integer personID) {
+		this.personID = personID;
+	}
+	
 	public LocalDateTime getCreated() {
 		return created;
 	}
-
 	public void setCreated(LocalDateTime created) {
 		this.created = created;
 	}
-
+	
 	public LocalDateTime getModified() {
 		return modified;
 	}
-
 	public void setModified(LocalDateTime modified) {
 		this.modified = modified;
 	}
-
-	public boolean getActive() {
-		return active;
-	}
-
-	public void setActive(boolean active) {
-		this.active = active;
-	}
-
-	public Integer getAccountNumber() {
-		return accountNumber;
-	}
-
-	public void setAccountNumber(Integer accountNumber) {
-		this.accountNumber = accountNumber;
-	}
-
-	public Integer getBankID() {
-		return bankID;
-	}
-
-	public void setBankID(Integer bankID) {
-		this.bankID = bankID;
-	}
-
-	public AType getAtype() {
-		return atype;
-	}
-
-	public void setAtype(AType atype) {
-		this.atype = atype;
-	}
-
 
 	public static Map<String, Extractor> lookup = new HashMap<>();
 	private static List<String[]> mod_names = new ArrayList<>();
@@ -157,7 +80,7 @@ public class Account implements Serializable {
 	private static List<String> f_setters = new ArrayList<>();
 	private static List<String[]> names = new ArrayList<>();
 	@SuppressWarnings("rawtypes")
-	private static Class aclass = Account.class;		
+	private static Class aclass = AccountOwner.class;		
 	//System.out.println(aclass.getDeclaredFields());
 
 	static {
@@ -321,6 +244,14 @@ public class Account implements Serializable {
 		afield.getValue().setter+" " + afield.getValue().sMethod + " " + 
 		afield.getValue().getter+" " + afield.getValue().gMethod);
 		}
+	}
+
+	public OType getOtype() {
+		return otype;
+	}
+
+	public void setOtype(OType otype) {
+		this.otype = otype;
 	}
 
 }

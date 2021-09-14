@@ -1,7 +1,10 @@
 package theBank.DAO;
 
+import java.util.List;
 import java.util.Map;
 
+import theBank.transactions.TState;
+import theBank.transactions.TType;
 import theBank.transactions.Transaction;
 
 /**
@@ -11,9 +14,13 @@ import theBank.transactions.Transaction;
 
 public interface TransactionDAO {
 	public Transaction getTransaction(int id) throws Exception;
-    Map<Integer, Transaction> getAllTransactions() throws Exception;
-    Map<Integer, Transaction> getTransactionsByUser(Integer UserID) throws Exception;
-    Map<Integer, Transaction> getTransactionsByAccount(Integer AccountID) throws Exception;
+    List<Transaction> getAllTransactions() throws Exception;
+    List<Transaction> getTransactionsByPersonID(Integer UserID) throws Exception;
+    List<Transaction> getTransactionsByAccountID(Integer AccountID) throws Exception;
+    List<Transaction> getTransactionsByTState(TState tstate) throws Exception;
+    List<Transaction> getTransactionsByTType(TType ttype) throws Exception;
+    List<Transaction> getTransactionsByDay(Integer day) throws Exception;
+    List<Transaction> getTransactionsByMonth(Integer month) throws Exception;
     boolean insertTransaction(Transaction transaction) throws Exception;
     boolean updateTransaction(Transaction transaction) throws Exception;
     boolean deleteTransaction(int id) throws Exception;

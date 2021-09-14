@@ -8,7 +8,7 @@ import oracle.jdbc.driver.OracleDriver;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
-import java.sql.PreparedStatement;
+//import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -107,38 +107,15 @@ public class ConnectionSingle {
 		try {
 			conn = ConnectionSingle.getConn();
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		Statement stmt = conn.createStatement();
-		ResultSet rs = null;
+		//Statement stmt = conn.createStatement();
+		//ResultSet rs = null;
 		if(connectionType.equalsIgnoreCase("mysql")) {
 			System.out.println("MYSQL");
-			rs = stmt.executeQuery("select * from person");
+			//rs = stmt.executeQuery("select * from person");
 		}
 		else {
-			System.out.println("ORACLE!");
-			rs = stmt.executeQuery("SELECT DISTINCT OBJECT_NAME \r\n"
-					+ "  FROM USER_OBJECTS\r\n"
-					+ " WHERE OBJECT_TYPE = 'TABLE'\r\n"
-					+ "");
-		    System.out.println("Tables in the current database: ");
-		      
-			//rs = stmt.executeQuery("select * from mybankusers");
-		}
-		while(rs.next()) {
-			String tablename = rs.getString(1);
-			try {
-			stmt.execute("drop table "+tablename + " CASCADE CONSTRAINTS PURGE");
-			}catch(Exception e) {
-			}finally {
-				rs = stmt.executeQuery("SELECT DISTINCT OBJECT_NAME \r\n"
-						+ "  FROM USER_OBJECTS\r\n"
-						+ " WHERE OBJECT_TYPE = 'TABLE'\r\n"
-						+ "");
-			}
-			System.out.print(tablename);
-			System.out.println();
 		}
 //			while(rs.next())
 //				System.out.println(rs.getInt(1)+"  "+rs.getString(2)+"  "+rs.getString(3));

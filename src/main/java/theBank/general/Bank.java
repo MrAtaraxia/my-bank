@@ -18,8 +18,13 @@ public class Bank {
 	private Integer addressID;
 	
 	public Bank(){
+		this(nextId);
 	}
-
+	
+	public Bank(Integer id) {
+		this.setId(id);
+	}
+	
 	public Integer getId() {
 		return id;
 	}

@@ -167,7 +167,7 @@ public abstract class BaseDAOImpl {
 	
 	protected boolean insertIt(String str, Object o, Map<String, Extractor> aLookup) throws Exception {
 	    Connection connection = ConnectionSingle.getConn();
-	    //System.out.println("Insert Start");
+	    System.out.println("Insert Start");
 	    StringBuilder begin = new StringBuilder("INSERT INTO " + str + " (");
 	    StringBuilder middle = new StringBuilder(") VALUES (");
 	    StringBuilder end = new StringBuilder(")");
@@ -185,24 +185,24 @@ public abstract class BaseDAOImpl {
 	    	if(curr.getValue().name.equalsIgnoreCase("modified")) {
 	    		continue;
 	    	}
-			//System.out.println(curr.getValue().name);
+			System.out.println(curr.getValue().name);
 			sParams.append(curr.getValue().name + ", ");
 			sValues.append("?, ");
 			sMeths.add(curr.getValue().gMethod);
 			sType.add(curr.getValue().gType);
 	    }
-	    //System.out.println("Params Made");
+	    System.out.println("Params Made");
 	    sParams = sParams.delete(sParams.lastIndexOf(","), sParams.length());
 	    sValues = sValues.delete(sValues.lastIndexOf(","), sValues.length());
 	    String query = begin.toString() + sParams.toString() + middle.toString() +
 	    		sValues.toString() + end.toString();
-	    //System.out.println(query);
+	    System.out.println(query);
 	    try {
 	    	PreparedStatement ps = connection.prepareStatement(query);
 	        for(int i = 0; i < sMeths.size(); i++ ) {
-	        	//System.out.println(sMeths.get(i) + " " + sType.get(i) + " " + i + " "+ sMeths.size());
+	        	System.out.println(sMeths.get(i) + " " + sType.get(i) + " " + i + " "+ sMeths.size());
 	        	if(sType.get(i).equalsIgnoreCase("Integer") || sType.get(i).equalsIgnoreCase("int")) {
-	        		//System.out.println("ABC" + sMeths.get(i).getName()+ " " + sMeths.get(i).invoke(o));
+	        		System.out.println("ABC" + sMeths.get(i).getName()+ " " + sMeths.get(i).invoke(o));
 	        		ps.setInt(i+1, (Integer) sMeths.get(i).invoke(o));
 	        	}else if(sType.get(i).equalsIgnoreCase("Double") || sType.get(i).equalsIgnoreCase("double")) {
 	        		ps.setDouble(i+1, (Double) sMeths.get(i).invoke(o));
@@ -228,7 +228,7 @@ public abstract class BaseDAOImpl {
 	        		ps.setString(i+1, ((OType) sMeths.get(i).invoke(o)).toString());
 	        	}
 	        }
-	        //System.out.println("HERE?");
+	        System.out.println("HERE?");
 	        int i = ps.executeUpdate();
 	        if(i == 1) { return true; }
 	    } catch (SQLException ex) { System.out.println(ex); }

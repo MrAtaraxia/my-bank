@@ -2,6 +2,8 @@ package theBank.DAO;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import theBank.accounts.Account;
 import theBank.transactions.TState;
 import theBank.transactions.TType;
 import theBank.transactions.Transaction;
@@ -15,7 +17,7 @@ public class TransactionDaoImpl extends BaseDAOImpl implements TransactionDAO {
 		myListT.add("id");
 		myListV.add(id);
 		for(var part:getAllItWherePS(
-				"Transaction", new Transaction(), Transaction.lookup,"id = ?", myListV, myListT)) {
+				"Transactions", new Transaction(), Transaction.lookup,"id = ?", myListV, myListT)) {
 			return (Transaction) part;
 		}
 		return null;
@@ -25,7 +27,7 @@ public class TransactionDaoImpl extends BaseDAOImpl implements TransactionDAO {
 	public List<Transaction> getAllTransactions() throws Exception {
 		List<Transaction> toReturn = null;
 		for(var part:getAllIt(
-				"Transaction", new Transaction(), Transaction.lookup).entrySet()) {
+				"Transactions", new Transaction(), Transaction.lookup).entrySet()) {
 			if(toReturn == null) { toReturn = new ArrayList<>(); }
 			toReturn.add((Transaction) part.getValue());
 		}
@@ -37,10 +39,10 @@ public class TransactionDaoImpl extends BaseDAOImpl implements TransactionDAO {
 		List<Transaction> toReturn = null;
 		List<String> myListT = new ArrayList<>();
 		List<Object> myListV = new ArrayList<>();
-		myListT.add("PersonID");
+		myListT.add("personID");
 		myListV.add(PersonID);
 		for(var part:getAllItWherePS(
-				"Transaction", new Transaction(), Transaction.lookup,"PersonID=?", myListV, myListT)) {
+				"Transactions", new Transaction(), Transaction.lookup,"PersonID=?", myListV, myListT)) {
 			if(toReturn==null) { toReturn=new ArrayList<>(); }
 			toReturn.add((Transaction) part);
 		}
@@ -53,10 +55,10 @@ public class TransactionDaoImpl extends BaseDAOImpl implements TransactionDAO {
 		List<Transaction> toReturn = null;
 		List<String> myListT = new ArrayList<>();
 		List<Object> myListV = new ArrayList<>();
-		myListT.add("AccountID");
+		myListT.add("accountID");
 		myListV.add(AccountID);
 		for(var part:getAllItWherePS(
-				"Transaction", new Transaction(), Transaction.lookup,"AccountID=?", myListV, myListT)) {
+				"Transactions", new Transaction(), Transaction.lookup,"AccountID=?", myListV, myListT)) {
 			if(toReturn==null) { toReturn=new ArrayList<>(); }
 			toReturn.add((Transaction) part);
 		}
@@ -68,10 +70,10 @@ public class TransactionDaoImpl extends BaseDAOImpl implements TransactionDAO {
 		List<Transaction> toReturn = null;
 		List<String> myListT = new ArrayList<>();
 		List<Object> myListV = new ArrayList<>();
-		myListT.add("TState");
+		myListT.add("tState");
 		myListV.add(tstate);
 		for(var part:getAllItWherePS(
-				"Transaction", new Transaction(), Transaction.lookup,"TState=?", myListV, myListT)) {
+				"Transactions", new Transaction(), Transaction.lookup,"TState=?", myListV, myListT)) {
 			if(toReturn==null) { toReturn=new ArrayList<>(); }
 			toReturn.add((Transaction) part);
 		}
@@ -83,10 +85,10 @@ public class TransactionDaoImpl extends BaseDAOImpl implements TransactionDAO {
 		List<Transaction> toReturn = null;
 		List<String> myListT = new ArrayList<>();
 		List<Object> myListV = new ArrayList<>();
-		myListT.add("TType");
+		myListT.add("tType");
 		myListV.add(ttype);
 		for(var part:getAllItWherePS(
-				"Transaction", new Transaction(), Transaction.lookup,"TType=?", myListV, myListT)) {
+				"Transactions", new Transaction(), Transaction.lookup,"TType=?", myListV, myListT)) {
 			if(toReturn==null) { toReturn=new ArrayList<>(); }
 			toReturn.add((Transaction) part);
 		}
@@ -107,17 +109,27 @@ public class TransactionDaoImpl extends BaseDAOImpl implements TransactionDAO {
 	
 	@Override
 	public boolean insertTransaction(Transaction input) throws Exception {
-	    return insertIt("Transaction",input,Transaction.lookup);
+	    return insertIt("Transactions",input,Transaction.lookup);
 	}
 
 	@Override
 	public boolean updateTransaction(Transaction input) throws Exception {
-		return updateIt("Transaction", input, Transaction.lookup);
+		return updateIt("Transactions", input, Transaction.lookup);
 	}
 
 	@Override
 	public boolean deleteTransaction(int id) throws Exception {
-		return deleteIt("Transaction", id);
+		return deleteIt("Transactions", id);
 	}
 
+	public static void main(String[] args) throws Exception {
+		TransactionDaoImpl tDao = new TransactionDaoImpl();
+		Account myAcc = new Account();
+		myAcc.setBankID(5);
+		List<Transaction> pers = tDao.getAllTransactions();
+		for(Transaction ap:pers) {
+			System.out.println(ap.getId());
+		}
+	}
+	
 }

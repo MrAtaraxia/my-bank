@@ -10,7 +10,7 @@ import theBank.accounts.Account;
 public class AccountDaoImpl extends BaseDAOImpl implements AccountDao {
 
 	@Override
-	public Account getAccount(int id) throws Exception {
+	public Account getAccount(Integer id) throws Exception {
 		List<String> myListT = new ArrayList<>();
 		List<Object> myListV = new ArrayList<>();
 		myListT.add("id");
@@ -143,7 +143,7 @@ public class AccountDaoImpl extends BaseDAOImpl implements AccountDao {
 	}
 
 	@Override
-	public Account insertAccount(Account input) throws Exception {
+	public Boolean insertAccount(Account input) throws Exception {
 	    List<Account> aThing = getAllAccounts();
 	    for(Account entity:aThing) {
 	    	if(entity.getBankID().equals(input.getBankID()))
@@ -155,35 +155,35 @@ public class AccountDaoImpl extends BaseDAOImpl implements AccountDao {
 	    	List<Account>aThing2= getAllAccounts();
 	    	for(Account ath:aThing2) {
 	    		if(!aThing.contains(ath)) {
-	    			return ath;
+	    			return true;
 	    		}
 	    	}
 	    }
-	    return null;
+	    return false;
 	}
 
 	@Override
-	public boolean updateAccount(Account input) throws Exception {
+	public Boolean updateAccount(Account input) throws Exception {
 		return updateIt("Account", input, Account.lookup);
 	}
 
 	@Override
-	public boolean activateAccount(int id) throws Exception {
+	public Boolean activateAccount(Integer id) throws Exception {
 		return activateIt("Account", new Account(), Account.lookup, id);
 	}
 
 	@Override
-	public boolean deactivateAccount(int id) throws Exception {
+	public Boolean deactivateAccount(Integer id) throws Exception {
 		return deactivateIt("Account", new Account(), Account.lookup, id);
 	}
 
 	@Override
-	public boolean deleteAccount(int id) throws Exception {
+	public Boolean deleteAccount(Integer id) throws Exception {
 		return deleteIt("Account", id);
 	}
 
 	@Override
-	public boolean CancelAccount(int id) throws Exception {
+	public Boolean CancelAccount(Integer id) throws Exception {
 		Account curr = getAccount(id);
 		if(curr!= null) {
 			curr.setAstate(AState.CANCELED);

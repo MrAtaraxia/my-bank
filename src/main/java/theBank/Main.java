@@ -1,5 +1,8 @@
 package theBank;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -7,6 +10,9 @@ import org.apache.logging.log4j.Logger;
 
 import theBank.accounts.*;
 import theBank.general.*;
+import theBank.transactions.TState;
+import theBank.transactions.TType;
+import theBank.transactions.Transaction;
 import theBank.DAO.*;
 import theBank.People.*;
 
@@ -33,7 +39,6 @@ public class Main {
 	public double allowed_per_day = 10000.0d;
 	public  String clearScreen = "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n";
 	public  String spacingOnScreen = "\n\n\n\n\n\n\n\n";
-
 	
 	Menu[] loginMenu = null;
 	Menu[] customerMenu = null;
@@ -75,7 +80,14 @@ public class Main {
 	UType typeOfUser = UType.NONE;
 	public Scanner aScanner = null;
 	
-	public Main() throws Exception {
+	/*
+	 * Setting up the program for remote end users.
+	 * TODO - keep working on this.
+	 */
+	public Main(InputStream input, OutputStream output) throws Exception {
+		
+		System.setIn(input);
+		System.setOut( new PrintStream(output));
 		logger.trace("Constructor() start.");
 		
 		List<Account> allAccounts= null;
@@ -136,7 +148,85 @@ public class Main {
 		adminMenu[6] = new Menu("6", "Quit");
 		//logger.trace("Constructor() end.");
 	}
+	
+	/*
+	 * Setting up the program.
+	 */
+	public Main() throws Exception {
+		logger.trace("Constructor() start.");
+		
+		List<Account>allAccounts = AcDao.getAllAccounts();
+		for(Account acc: allAccounts) {
+			if(Account.nextId < acc.getId()) {
+				Account.nextId = acc.getId();
+			}
+		}
+		List<AccountOwner>allAOs = AoDao.getAllAOs();
+		for(AccountOwner acc: allAOs) {
+			if(AccountOwner.nextId < acc.getId()) {
+				AccountOwner.nextId = acc.getId();
+			}
+		}
+		List<Transaction> allTran = tDao.getAllTransactions();
+		for(Transaction use: allTran) {
+			if(Transaction.nextId < use.getId()) {
+				Transaction.nextId = use.getId();
+			}
+		}
+		List<Username> allUse = uDao.getAllUsernames();
+		for(Username use: allUse) {
+			if(Username.nextId < use.getId()) {
+				Username.nextId = use.getId();
+			}
+		}
+		List<Person> allUsers = pDao.getAllPeople();
+		for(Person use: allUsers) {
+			if(Person.nextId < use.getId()) {
+				Person.nextId = use.getId();
+			}
+		}
+//		
+		
+		System.out.print("NEXT U:" + Person.nextId + "\n");
+		System.out.print("NEXT A:" + Account.nextId + "\n");
+		//User bob = new User(13, "aUser", "aPassword", 20, UserType.ADMIN);
+		//bob.getName();
+		//allUsers.get(i).
+		aScanner = new Scanner(System.in);
+		loginMenu = new Menu[3];
+		loginMenu[0] = new Menu("0", "Login");
+		loginMenu[1] = new Menu("1", "Register");
+		loginMenu[2] = new Menu("2", "Quit");
+		
+		customerMenu = new Menu[6];
+		customerMenu[0] = new Menu("0", "Apply to open an account.");
+		customerMenu[1] = new Menu("1", "Apply to open a join account.");
+		customerMenu[2] = new Menu("2", "Withdraw from Account", "IfAccount");
+		customerMenu[3] = new Menu("3", "Deposit to Account", "IfAccount");
+		customerMenu[4] = new Menu("4", "Transfer between Accounts", "If2Accounts");
+		customerMenu[5] = new Menu("5", "Quit");
+		
+		employeeMenu = new Menu[5];
+		employeeMenu[0] = new Menu("0", "View Customer Account Information");
+		employeeMenu[1] = new Menu("1", "View Customer Personal Information");
+		employeeMenu[2] = new Menu("2", "Approve/Deny Open Applications", "IfApplications");
+		employeeMenu[3] = new Menu("3", "View Log of All Transactions");
+		employeeMenu[4] = new Menu("4", "Quit");
+		
+		adminMenu = new Menu[7];
+		adminMenu[0] = new Menu("0", "View All Accounts");
+		adminMenu[1] = new Menu("1", "Withdraw from Account");
+		adminMenu[2] = new Menu("2", "Deposit to Account");
+		adminMenu[3] = new Menu("3", "Transfer Between Accounts");
+		adminMenu[4] = new Menu("4", "Approve/Deny Open Applications", "IfApplications");
+		adminMenu[5] = new Menu("5", "Cancel Account");
+		adminMenu[6] = new Menu("6", "Quit");
+		//logger.trace("Constructor() end.");
+	}
 
+	/*
+	 * Running the program.
+	 */
 	public void run() throws Exception {
 		logger.trace("Entering run.");
 		splashScreen();
@@ -182,7 +272,10 @@ public class Main {
 		System.out.println("DONE!");
 		logger.trace("Exiting Run.");
 	}
-
+	
+	/*
+	 * The Customer menu.
+	 */
 	public int custMenu() throws Exception {
 		//logger.info("Enter Customer Menu.");
 		if(!currentUser.getUType().equals(UType.CUSTOMER)) {
@@ -219,11 +312,14 @@ public class Main {
 		//logger.warn("This SHOULD NOT HAPPEN!");
 		return 0;
 	}
-	
+	/*
+	 * Customers can apply to open an account.
+	 * Customer can apply for account with a starting balance.
+	 */
 	public void applyOpenAccount() {
 		//logger.info("Enter Apply Open Account.");
 		//System.out.print(custMenuChoicesText[0]);
-		System.out.println("OPEN ACCOUNT1");
+		//System.out.println("OPEN ACCOUNT1");
 		Account tempAcc = new Account();
 		List<AccountOwner> AO = new ArrayList<>();
 		tempAcc.setAtype(AType.INDIVIDUAL);
@@ -233,18 +329,56 @@ public class Main {
 		tempAcc.setAccountNumber(tempAcc.getId());
 		tempAcc.setBankID(currentBank.getId());
 		AccountOwner newAO = new AccountOwner();
-		System.out.println("OPEN ACCOUNT2");
+		//System.out.println("OPEN ACCOUNT2");
 		newAO.setAccountID(tempAcc.getId());
 		newAO.setPersonID(currentUser.getPersonID());
-		System.out.println("OPEN ACCOUNT3");
+		//System.out.println("OPEN ACCOUNT3");
 		AO.add(newAO);
+		String startingBalance="";
+		String theInput="";
+		while(startingBalance=="") {
+			System.out.print("Would you like to add a starting balance to the account?\n");
+			System.out.print("[Y]es or *[N]o:");
+			theInput = aScanner.nextLine();
+			for(String cur :DEFAULT_NO_YES) {
+				if(theInput.equalsIgnoreCase(cur)) {
+					startingBalance="Yes";
+					break;
+				}
+			}			
+			for(String cur :DEFAULT_NO_NO) {
+				if(theInput.equalsIgnoreCase(cur)) {
+					startingBalance="No";
+					break;
+				}
+			}
+		}
+		double sbalance =-1;
+		while(sbalance < 0 && startingBalance.equals("Yes")) {
+			System.out.print("How much would you like to deposit for a starting balance?\n");
+			theInput = aScanner.nextLine();
+			try {
+				sbalance = Double.parseDouble(theInput);
+				if(sbalance > 0) {
+					break;
+				}
+			}catch(Exception e) {
+				
+			}
+		}
 		try {
+			if(sbalance >0) {
+				tempAcc.setBalance(sbalance);
+			}
 			if(AcDao.insertAccount(tempAcc)!=null)
 			{
 				logger.info("User:" + currentUser.getId().toString() + " - Applied to open an account.");
 				System.out.print("You have been added to the list of users who want to add new accounts.\n");
 				System.out.print("When an employee approves of your new account\nit will be added to your list of accounts.\n");
 				System.out.print("Thank you for applying for wanting to create a new account.\n");
+				if(sbalance >0) {
+					System.out.print("The new account will have a starting balance of :" + tempAcc.getBalance() +"\n");
+				}
 			}
 			else {
 				System.out.print("Sadly the system is unable to process your request.\nTry again later!");
@@ -257,6 +391,9 @@ public class Main {
 		//logger.info("Exit Apply Open Account.");
 	}
 
+	/*
+	 * Customers can apply for a joint account.
+	 */
 	public boolean applyOpenJointAccount() throws Exception {
 		//logger.info("Enter Apply Open Joint Account.");
 		String theInput;
@@ -311,7 +448,7 @@ public class Main {
 					tempAcc.setAtype(AType.JOINT);
 					tempAcc.setActive(true);
 					tempAcc.setAstate(AState.AWAITING_CONFIRMATION);
-					tempAcc = AcDao.insertAccount(tempAcc);
+					//tempAcc = AcDao.insertAccount(tempAcc);
 					newOwn1.setAccountID(tempAcc.getId());
 					newOwn2.setAccountID(tempAcc.getId());
 					AoDao.insertAO(newOwn1);
@@ -329,7 +466,9 @@ public class Main {
 		//logger.warn("Failed to Apply to Open Joint Account.");
 		return false;
 	}
-	
+	/*
+	 * get a List of the accounts, depending on user type.
+	 */
 	public List<Account> getAccounts() throws Exception{
 		//logger.info("getAccounts Start");
 		if(currentUser.getUType().equals(UType.ADMIN)) {
@@ -341,6 +480,9 @@ public class Main {
 		return null;
 	}
 	
+	/*
+	 * withdrawing from an account.
+	 */
 	public void withdrawFromAccount() throws Exception {
 		//logger.info("Withdraw From Account Start.");
 		System.out.print("Which Account would you like to withdraw from:\n");
@@ -378,20 +520,35 @@ public class Main {
 					logger.info("Acc:" + tempAccount.getId() + " old balance " + tempAccount.getBalance());
 					tempAccount.setBalance(tempAccount.getBalance()-wAmount);
 					AcDao.updateAccount(tempAccount);
+					
 					logger.info("User:" + currentUser.getId().toString() + " - withdrew " + wAmount + " from " + tempAccount.getId());
 					logger.info("Acc:" + tempAccount.getId() + " new balance " + tempAccount.getBalance());
+					Transaction aTransaction = new Transaction();
+					aTransaction.setAccountLocalID(tempAccount.getId());
+					aTransaction.setRoutingLocalNum(currentBank.getRouting());
+					aTransaction.setPersonID(currentPerson.getId());
+					aTransaction.setAddition(0.0d);
+					aTransaction.setSubtraction(wAmount);
+					aTransaction.setBalance(tempAccount.getBalance());
+					aTransaction.setDescription("Cash Withdrawl");
+					aTransaction.setTType(TType.CASH_WITHDRAWL);
+					aTransaction.setTState(TState.APPROVED);
+					tDao.insertTransaction(aTransaction);
 					System.out.print("Account " + tempAccount.getId() + " has a new balance of " + tempAccount.getBalance() + "\n");
 					break;
 				}
 			}
 			catch(Exception e) {
-				System.out.print("Please try again.\n");
+				System.out.print("Please try again.\n"+e);
 				continue;
 			}
 			
 		}
 	}
 	
+	/*
+	 * depositing to an account.
+	 */
 	public void depositToAccount() throws Exception {
 		//logger.info("Deposit To Account Start.");
 		System.out.print("Which Account would you like to deposit to:\n");
@@ -424,6 +581,17 @@ public class Main {
 					AcDao.updateAccount(tempAccount);
 					logger.info("User:" + currentUser.getId().toString() + "-deposited-" + wAmount + "-into-" + tempAccount.getId());
 					logger.info("Acc:" + tempAccount.getId() + " new balance " + tempAccount.getBalance());
+					Transaction aTransaction = new Transaction();
+					aTransaction.setAccountLocalID(tempAccount.getId());
+					aTransaction.setRoutingLocalNum(currentBank.getRouting());
+					aTransaction.setPersonID(currentPerson.getId());
+					aTransaction.setAddition(wAmount);
+					aTransaction.setSubtraction(0.0d);
+					aTransaction.setBalance(tempAccount.getBalance());
+					aTransaction.setDescription("Cash Deposit");
+					aTransaction.setTType(TType.CASH_DEPOSIT);
+					aTransaction.setTState(TState.APPROVED);
+					tDao.insertTransaction(aTransaction);
 					System.out.print("Account " + tempAccount.getId() + " has a new balance of " + tempAccount.getBalance() + "\n");
 					break;
 				}
@@ -436,6 +604,9 @@ public class Main {
 		}
 	}
 
+	/*
+	 * Transfering between accounts.
+	 */
 	public void transferBetweenAccounts() throws Exception{
 		//logger.info("Transfer Between Accounts Start.");
 		while(true) {
@@ -480,6 +651,30 @@ public class Main {
 						logger.info("User:" + currentUser.getId().toString() + "-transfered-" + wAmount + "-from-" + fromAcc.getId()+ "-to-" + toAcc.getId());
 						logger.info("Acc:" + fromAcc.getId() + " new balance " + fromAcc.getBalance());
 						logger.info("Acc:" + toAcc.getId() + " new balance " + toAcc.getBalance());
+						Transaction oTransaction = new Transaction();
+						oTransaction.setAccountLocalID(fromAcc.getId());
+						oTransaction.setRoutingLocalNum(currentBank.getRouting());
+						oTransaction.setPersonID(currentPerson.getId());
+						oTransaction.setAddition(0.0d);
+						oTransaction.setSubtraction(wAmount);
+						oTransaction.setBalance(fromAcc.getBalance());
+						oTransaction.setDescription("TRANSFER OUT");
+						oTransaction.setTType(TType.TRANSFER);
+						oTransaction.setTState(TState.APPROVED);
+						tDao.insertTransaction(oTransaction);
+						
+						Transaction aTransaction = new Transaction();
+						aTransaction.setAccountLocalID(toAcc.getId());
+						aTransaction.setRoutingLocalNum(currentBank.getRouting());
+						aTransaction.setPersonID(currentPerson.getId());
+						aTransaction.setAddition(wAmount);
+						aTransaction.setSubtraction(0.0d);
+						aTransaction.setBalance(toAcc.getBalance());
+						aTransaction.setDescription("TRANSFER IN");
+						aTransaction.setTType(TType.TRANSFER);
+						aTransaction.setTState(TState.APPROVED);
+						tDao.insertTransaction(aTransaction);
+						
 						System.out.print("Account " + fromAcc.getId() + " has a new balance of " + fromAcc.getBalance() + "\n");
 						System.out.print("Account " + toAcc.getId() + " has a new balance of " + toAcc.getBalance() + "\n");
 						break;
@@ -493,7 +688,9 @@ public class Main {
 			break;
 		}
 	}
-	
+	/*
+	 * Employee Menu.
+	 */
 	public int employMenu() throws Exception{
 		//logger.info("Employee Menu Start.");
 		if(!currentUser.getUType().equals(UType.EMPLOYEE)) {
@@ -514,6 +711,9 @@ public class Main {
 			case "Approve/Deny Open Applications":
 				approveDeny();
 				break;
+			case "View Log of All Transactions":
+				viewLog();
+				break;
 			case "Quit":
 				return -1;
 			default:
@@ -524,6 +724,9 @@ public class Main {
 		return 0;
 	}
 
+	/*
+	 * Is the program/test working?
+	 */
 	public int isTestWorking(String s) {
 		//logger.info("TESTING if tests work!");
 		System.out.println(s);
@@ -533,6 +736,9 @@ public class Main {
 		return 5;
 	}
 	
+	/*
+	 * Employees are able to view customer account information.
+	 */
 	public void viewCustAccInfo() throws Exception {
 		//logger.info("View Customer Account Info");
 		Username tempUser = null;
@@ -551,6 +757,9 @@ public class Main {
 		}
 	}
 	
+	/*
+	 * Employees are able to view customer personal information.
+	 */
 	public void viewCustPersonalInfo() throws Exception {
 		//logger.info("View Customer Personal Information");
 		Username tempUser = getCustomer("Personal Information");
@@ -563,7 +772,9 @@ public class Main {
 			System.out.print("Username:   " + tempUser.getUsername() + "\n");
 		}
 	}
-	
+	/*
+	 * The admins menu.
+	 */
 	public int adminMenu() throws Exception {
 		//logger.info("Admin Menu Start");
 		if(!currentUser.getUType().equals(UType.ADMIN)) {
@@ -601,6 +812,9 @@ public class Main {
 		return 0;
 	}
 	
+	/*
+	 * Admins are allowed to view all accounts.
+	 */
 	public void viewAllAccounts() throws Exception{
 		//logger.info("View All Accounts");
 		//System.out.println("VIEW ACCOUNTS####################");
@@ -616,6 +830,9 @@ public class Main {
 		}
 	}
 	
+	/*
+	 * Admins are allowed to cancel accounts.
+	 */
 	public void cancelAccount() throws Exception {
 		//logger.info("Cancel Account");
 		if(currentUser.getUType().equals(UType.ADMIN))
@@ -662,6 +879,9 @@ public class Main {
 		}
 	}
 	
+	/*
+	 * The approve/deny menu accessible by admins and employees.
+	 */
 	public void approveDeny() throws Exception {
 		//logger.info("Approve/Deny");
 		boolean exit = false;
@@ -723,10 +943,27 @@ public class Main {
 		}
 	}
 	
+	/*
+	 * Employees are able to view a log of all transactions.
+	 */
+	public void viewLog() throws Exception {
+		//logger.info("View All Accounts");
+		//System.out.println("VIEW ACCOUNTS####################");
+		List<Transaction> tempList = tDao.getAllTransactions();
+		//System.out.println("VIEW ACCOUNTS2####################");
+		for(Transaction tra : tempList) {
+			System.out.print("Account: " + tra.getAccountLocalID() + " Added: " + tra.getAddition()+ " Removed: " + tra.getSubtraction());
+			System.out.print(" Type:" + tra.getTType() + " Post-Balance:" + tra.getBalance() + " By:" + tra.getPersonID() + "\n");
+		}
+	}
+	
 	String[] splashScreenText = {
 			new StringBuilder(clearScreen+WELCOME_MESSAGE+spacingOnScreen+PRESS_ANY).toString(),
 			clearScreen};
 	
+	/*
+	 * The splash screen for the application.
+	 */
 	public void splashScreen() {
 		//logger.info("Splash Screen");
 		System.out.print(splashScreenText[0]);
@@ -734,6 +971,9 @@ public class Main {
 		System.out.print(splashScreenText[1]);
 	}
 	
+	/*
+	 * The Login Screen for the application.
+	 */
 	@SuppressWarnings("unused")
 	public int loginScreen() throws Exception {
 		//logger.info("Login Screen");
@@ -763,6 +1003,9 @@ public class Main {
 			" : ",
 			clearScreen};
 	
+	/*
+	 * Inputing a choice.
+	 */
 	public String inputChoice(String to_input) {
 		//logger.info("Input Choice");
 		String to_return;
@@ -793,6 +1036,10 @@ public class Main {
 			":",
 			"\n"};
 	
+	
+	/*
+	 * Registering a new customer account.
+	 */
 	public int registerCustomer() throws Exception {
 		//logger.info("Register Customer");
 		boolean running = true;

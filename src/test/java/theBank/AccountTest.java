@@ -1,7 +1,9 @@
 package theBank;
 import static org.junit.Assert.*;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.junit.Test;
@@ -36,33 +38,34 @@ public class AccountTest{
 	public void createBadAccountTypeTest() throws Exception {
 		Account myAccount = new Account();
 		int newTemp = 6;
-		myAccount.setType(AType.values()[newTemp]);
+		myAccount.setAtype(AType.values()[newTemp]);
 	}
 	
 	@Test//(expected = ArrayIndexOutOfBoundsException.class)
 	public void createAccountsTypeTest() throws Exception {
-		AccountDaoText aDao = new AccountDaoText();
+		AccountDaoImpl AcDao = new AccountDaoImpl();
 		Account aAccount = new Account();
-		Set<Account> sAcc = null;
-		sAcc = aDao.getAllAccounts();
+		List<Account> sAcc = null;
+		sAcc = AcDao.getAllAccounts();
 		if(sAcc == null) {
-			sAcc = new HashSet<>();
+			sAcc = new ArrayList<>();
 		}
 		sAcc.add(aAccount);
 		for(Account acc: sAcc) {
-			System.out.print(acc.getId() + " " + acc.getType() + " " + acc.getBalance() + "\n");
+			System.out.print(acc.getId() + " " + acc.getAtype() + " " + acc.getBalance() + "\n");
 		}
-		boolean testing = aDao.insertAccount(aAccount);
+		boolean testing = AcDao.insertAccount(aAccount);
 		assertEquals(true, testing);
 	}
 	
 	@Test
 	public void getAccountDaoTest() throws Exception {
-		AccountDao aDao = new AccountDaoText();
+		AccountDao aDao = new AccountDaoImpl();
 		
 		Account myThing = aDao.getAccount(2);
 		System.out.println(myThing.getBalance());
-		assertTrue(true);
+		Double value = 500.0;
+		assertEquals(myThing.getBalance(),value);
 	}
 	
 }

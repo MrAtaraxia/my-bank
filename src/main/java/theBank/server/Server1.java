@@ -6,6 +6,7 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
+import theBank.*;
 
 public class Server1 {
     private ServerSocket serverSocket;
@@ -42,10 +43,23 @@ public class Server1 {
             String inputLine;
             try {
 				while ((inputLine = in.readLine()) != null) {
-				    if (".".equals(inputLine)) {
+				    if ("quit".equalsIgnoreCase(inputLine)) {
 				        out.println("bye");
 				        break;
 				    }
+					Main myMain = null;
+					try {
+						myMain = new Main(clientSocket.getInputStream(), clientSocket.getOutputStream());
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+					
+					try {
+						myMain.run();
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+					
 				    out.println(inputLine);
 				}
 			} catch (IOException e) {
@@ -65,6 +79,7 @@ public class Server1 {
     public static void main(String[] args) {
     	Server1 server = new Server1();
     	try {
+    		System.out.println("Server Started");
 			server.start(7777);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block

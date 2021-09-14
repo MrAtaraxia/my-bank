@@ -16,17 +16,17 @@ public class Transaction {
 	public static Integer nextId = 1;
 	private Integer id;
 	private Integer AccountLocalID;
-	private Integer RoutingLocalNum;
+	private String RoutingLocalNum;
 	private Integer PersonID;
-	private Integer AccountExID;
-	private Integer RoutingExNum;
+//	private Integer AccountExID;
+//	private String RoutingExNum;
 	private String Description;
-	private Integer Addition;
-	private Integer Subtraction;
+	private Double Addition;
+	private Double Subtraction;
 	private Double Balance;
 	private TState tstate;
 	private TType ttype;
-	private Boolean taxable;
+	private Boolean taxable=true;
 	private LocalDateTime created;
 	private LocalDateTime modified;
 	
@@ -61,11 +61,11 @@ public class Transaction {
 		AccountLocalID = accountLocalID;
 	}
 
-	public Integer getRoutingLocalID() {
+	public String getRoutingLocalNum() {
 		return RoutingLocalNum;
 	}
 
-	public void setRoutingLocalID(Integer routingLocalID) {
+	public void setRoutingLocalNum(String routingLocalID) {
 		RoutingLocalNum = routingLocalID;
 	}
 
@@ -76,22 +76,22 @@ public class Transaction {
 	public void setPersonID(Integer personID) {
 		PersonID = personID;
 	}
+//
+//	public Integer getAccountExID() {
+//		return AccountExID;
+//	}
+//
+//	public void setAccountExID(Integer accountExID) {
+//		AccountExID = accountExID;
+//	}
 
-	public Integer getAccountExID() {
-		return AccountExID;
-	}
-
-	public void setAccountExID(Integer accountExID) {
-		AccountExID = accountExID;
-	}
-
-	public Integer getRoutingExID() {
-		return RoutingExNum;
-	}
-
-	public void setRoutingExID(Integer routingExID) {
-		RoutingExNum = routingExID;
-	}
+//	public String getRoutingExNum() {
+//		return RoutingExNum;
+//	}
+//
+//	public void setRoutingExNum(String routingExID) {
+//		RoutingExNum = routingExID;
+//	}
 
 	public String getDescription() {
 		return Description;
@@ -101,19 +101,19 @@ public class Transaction {
 		Description = description;
 	}
 
-	public Integer getAddition() {
+	public Double getAddition() {
 		return Addition;
 	}
 
-	public void setAddition(Integer addition) {
+	public void setAddition(Double addition) {
 		Addition = addition;
 	}
 
-	public Integer getSubtraction() {
+	public Double getSubtraction() {
 		return Subtraction;
 	}
 
-	public void setSubtraction(Integer subtraction) {
+	public void setSubtraction(Double subtraction) {
 		Subtraction = subtraction;
 	}
 
@@ -125,19 +125,19 @@ public class Transaction {
 		Balance = balance;
 	}
 
-	public TState getState() {
+	public TState getTState() {
 		return tstate;
 	}
 
-	public void setState(TState tstate) {
-		this.tstate = tstate;
+	public void setTState(TState cashWithdrawl) {
+		this.tstate = cashWithdrawl;
 	}
 
-	public TType getType() {
+	public TType getTType() {
 		return ttype;
 	}
 
-	public void setType(TType ttype) {
+	public void setTType(TType ttype) {
 		this.ttype = ttype;
 	}
 

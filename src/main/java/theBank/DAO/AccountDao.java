@@ -11,7 +11,7 @@ import theBank.accounts.Account;
  */
 
 public interface AccountDao {
-    public Account getAccount(int id) throws Exception;
+    public Account getAccount(Integer id) throws Exception;
     List<Account> getAllAccounts() throws Exception;
     List<Account> getAllActiveAccounts() throws Exception;
     List<Account> getAllNeedApprovalAccounts() throws Exception;
@@ -20,10 +20,10 @@ public interface AccountDao {
     List<Account> getAccountsByType(AType atype) throws Exception;
     List<Account> getActiveAccountsByType(AType atype) throws Exception;
     List<Account> getAccountsByAccountIDs(List<Integer> accountIDs) throws Exception;
-    Account insertAccount(Account account) throws Exception;
-    boolean updateAccount(Account account) throws Exception;
-    boolean activateAccount(int id) throws Exception;
-    boolean deactivateAccount(int id) throws Exception;
-    boolean deleteAccount(int id) throws Exception;
-	boolean CancelAccount(int id) throws Exception;
+    Boolean insertAccount(Account account) throws Exception;
+    Boolean updateAccount(Account account) throws Exception;
+    Boolean activateAccount(Integer id) throws Exception;
+    Boolean deactivateAccount(Integer id) throws Exception;
+    Boolean deleteAccount(Integer id) throws Exception;
+    Boolean CancelAccount(Integer id) throws Exception;
 }

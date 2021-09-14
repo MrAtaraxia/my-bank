@@ -12,7 +12,7 @@ import java.util.Map.Entry;
 import theBank.general.Extractor;
 
 public class Username {
-	private static Integer nextId = 1;
+	public static Integer nextId = 1;
 	private Integer id;
 	private Boolean active;
 	private Integer personID;

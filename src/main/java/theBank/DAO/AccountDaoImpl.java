@@ -24,7 +24,7 @@ public class AccountDaoImpl extends BaseDAOImpl implements AccountDao {
 
 	@Override
 	public List<Account> getAllAccounts() throws Exception {
-		List<Account> toReturn = null;
+		List<Account> toReturn =  new ArrayList<>();
 		for(var part:getAllIt(
 				"Account", new Account(), Account.lookup).entrySet()) {
 			if(toReturn == null) { toReturn = new ArrayList<>(); }
@@ -35,7 +35,7 @@ public class AccountDaoImpl extends BaseDAOImpl implements AccountDao {
 
 	@Override
 	public List<Account> getAllActiveAccounts() throws Exception {
-		List<Account> toReturn = null;
+		List<Account> toReturn = new ArrayList<>();
 		List<String> myListT = new ArrayList<>();
 		List<Object> myListV = new ArrayList<>();
 		myListT.add("active");
@@ -52,7 +52,7 @@ public class AccountDaoImpl extends BaseDAOImpl implements AccountDao {
 
 	@Override
 	public List<Account> getAllNeedApprovalAccounts() throws Exception {
-		List<Account> toReturn = null;
+		List<Account> toReturn =  new ArrayList<>();
 		List<String> myListT = new ArrayList<>();
 		List<Object> myListV = new ArrayList<>();
 		myListT.add("astate");
@@ -67,7 +67,7 @@ public class AccountDaoImpl extends BaseDAOImpl implements AccountDao {
 
 	@Override
 	public List<Account> getAccountsByState(AState astate) throws Exception {
-		List<Account> toReturn = null;
+		List<Account> toReturn =  new ArrayList<>();
 		List<String> myListT = new ArrayList<>();
 		List<Object> myListV = new ArrayList<>();
 		myListT.add("astate");
@@ -82,7 +82,7 @@ public class AccountDaoImpl extends BaseDAOImpl implements AccountDao {
 
 	@Override
 	public List<Account> getActiveAccountsByState(AState astate) throws Exception {
-		List<Account> toReturn = null;
+		List<Account> toReturn =  new ArrayList<>();
 		List<String> myListT = new ArrayList<>();
 		List<Object> myListV = new ArrayList<>();
 		myListT.add("active");
@@ -99,7 +99,7 @@ public class AccountDaoImpl extends BaseDAOImpl implements AccountDao {
 
 	@Override
 	public List<Account> getAccountsByType(AType atype) throws Exception {
-		List<Account> toReturn = null;
+		List<Account> toReturn =  new ArrayList<>();
 		List<String> myListT = new ArrayList<>();
 		List<Object> myListV = new ArrayList<>();
 		myListT.add("atype");
@@ -114,7 +114,7 @@ public class AccountDaoImpl extends BaseDAOImpl implements AccountDao {
 
 	@Override
 	public List<Account> getActiveAccountsByType(AType atype) throws Exception {
-		List<Account> toReturn = null;
+		List<Account> toReturn =  new ArrayList<>();
 		List<String> myListT = new ArrayList<>();
 		List<Object> myListV = new ArrayList<>();
 		myListT.add("active");
@@ -131,7 +131,7 @@ public class AccountDaoImpl extends BaseDAOImpl implements AccountDao {
 	
 	@Override
     public List<Account> getAccountsByAccountIDs(List<Integer> accountIDs) throws Exception{
-		List<Account> toReturn = null;
+		List<Account> toReturn =  new ArrayList<>();
 		for(Integer accNum:accountIDs) {
 			Account curAcc = getAccount(accNum);
 			if(curAcc!=null) {

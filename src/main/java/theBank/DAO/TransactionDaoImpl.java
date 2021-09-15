@@ -25,7 +25,7 @@ public class TransactionDaoImpl extends BaseDAOImpl implements TransactionDAO {
 
 	@Override
 	public List<Transaction> getAllTransactions() throws Exception {
-		List<Transaction> toReturn = null;
+		List<Transaction> toReturn =  new ArrayList<>();
 		for(var part:getAllIt(
 				"Transactions", new Transaction(), Transaction.lookup).entrySet()) {
 			if(toReturn == null) { toReturn = new ArrayList<>(); }
@@ -36,7 +36,7 @@ public class TransactionDaoImpl extends BaseDAOImpl implements TransactionDAO {
 
 	@Override
 	public  List<Transaction> getTransactionsByPersonID(Integer PersonID) throws Exception {
-		List<Transaction> toReturn = null;
+		List<Transaction> toReturn =  new ArrayList<>();
 		List<String> myListT = new ArrayList<>();
 		List<Object> myListV = new ArrayList<>();
 		myListT.add("personID");
@@ -52,7 +52,7 @@ public class TransactionDaoImpl extends BaseDAOImpl implements TransactionDAO {
 
 	@Override
 	public  List<Transaction> getTransactionsByAccountID(Integer AccountID) throws Exception {
-		List<Transaction> toReturn = null;
+		List<Transaction> toReturn =  new ArrayList<>();
 		List<String> myListT = new ArrayList<>();
 		List<Object> myListV = new ArrayList<>();
 		myListT.add("accountID");
@@ -67,7 +67,7 @@ public class TransactionDaoImpl extends BaseDAOImpl implements TransactionDAO {
 
 	@Override
 	public  List<Transaction> getTransactionsByTState(TState tstate) throws Exception {
-		List<Transaction> toReturn = null;
+		List<Transaction> toReturn =  new ArrayList<>();
 		List<String> myListT = new ArrayList<>();
 		List<Object> myListV = new ArrayList<>();
 		myListT.add("tState");
@@ -82,7 +82,7 @@ public class TransactionDaoImpl extends BaseDAOImpl implements TransactionDAO {
 
 	@Override
 	public  List<Transaction> getTransactionsByTType(TType ttype) throws Exception {
-		List<Transaction> toReturn = null;
+		List<Transaction> toReturn =  new ArrayList<>();
 		List<String> myListT = new ArrayList<>();
 		List<Object> myListV = new ArrayList<>();
 		myListT.add("tType");

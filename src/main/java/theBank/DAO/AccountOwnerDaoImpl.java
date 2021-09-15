@@ -158,12 +158,13 @@ public class AccountOwnerDaoImpl extends BaseDAOImpl implements AccountOwnerDao 
 
 	@Override
 	public boolean insertAO(AccountOwner ao) throws Exception {
-		List<AccountOwner> aMap = getAllAOs();
-	    for(AccountOwner entity:aMap) {
-	    	if(entity.getAccountID().equals(ao.getAccountID()))
-	    		if(entity.getPersonID().equals(ao.getPersonID()))
-	    			{ System.out.println("Duplicate"); return false; }
-	    }
+//		List<AccountOwner> aMap = getAllAOs();
+//	    for(AccountOwner entity:aMap) {
+//	    	if(entity.getAccountID().equals(ao.getAccountID()))
+//	    		if(entity.getPersonID().equals(ao.getPersonID()))
+//	    			{ System.out.println("Duplicate"); return false; }
+//	    }
+		System.out.println("INSERT IT AO");
 	    return insertIt("AccountOwner",ao,AccountOwner.lookup);
 	}
 

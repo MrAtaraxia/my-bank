@@ -1,9 +1,9 @@
 package theBank;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.PrintStream;
-import java.util.ArrayList;
+//import java.io.InputStream;
+//import java.io.OutputStream;
+//import java.io.PrintStream;
+//import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 import org.apache.logging.log4j.Logger;
@@ -62,7 +62,7 @@ public class Main {
 	String YD_N_Q = 			"[Y]es* or [N]o or [Q]uit";
 	String Y_ND = 				"[Y]es or [N]o*";
 	String YD_N = 				"[Y]es* or [N]o";
-	String PRESS_ANY = 			"Press Any Key to Continue:";
+	String PRESS_ANY = 			"Press Enter to Continue:";
 	int minLength = 5;
 	int maxLength = 50;
 	protected BankDaoImpl bDao = new BankDaoImpl();
@@ -84,70 +84,71 @@ public class Main {
 	 * Setting up the program for remote end users.
 	 * TODO - keep working on this.
 	 */
-	public Main(InputStream input, OutputStream output) throws Exception {
-		
-		System.setIn(input);
-		System.setOut( new PrintStream(output));
-		logger.trace("Constructor() start.");
-		
-		List<Account> allAccounts= null;
-		allAccounts = AcDao.getAllAccounts();
-		
-		int nextAcc = 0;
-		for(Account acc: allAccounts) {
-			if(nextAcc < acc.getId()) {
-				nextAcc = acc.getId();
-			}
-		}
-		
-		Account.nextId = nextAcc+1;
-		List<Person> allUsers = new ArrayList<>();
-
-		allUsers = pDao.getAllPeople();
-		int nextUser = 0;
-		for(Person use: allUsers) {
-			if(nextUser < use.getId()) {
-				nextUser = use.getId();
-			}
-		}
-//		User.nextId = nextUser+1;
+//	public Main(InputStream input, OutputStream output) throws Exception {
 //		
-		
-		System.out.print("NEXT U:" + Person.nextId + "\n");
-		System.out.print("NEXT A:" + Account.nextId + "\n");
-		//User bob = new User(13, "aUser", "aPassword", 20, UserType.ADMIN);
-		//bob.getName();
-		//allUsers.get(i).
-		aScanner = new Scanner(System.in);
-		loginMenu = new Menu[3];
-		loginMenu[0] = new Menu("0", "Login");
-		loginMenu[1] = new Menu("1", "Register");
-		loginMenu[2] = new Menu("2", "Quit");
-		
-		customerMenu = new Menu[6];
-		customerMenu[0] = new Menu("0", "Apply to open an account.");
-		customerMenu[1] = new Menu("1", "Apply to open a join account.");
-		customerMenu[2] = new Menu("2", "Withdraw from Account", "IfAccount");
-		customerMenu[3] = new Menu("3", "Deposit to Account", "IfAccount");
-		customerMenu[4] = new Menu("4", "Transfer between Accounts", "If2Accounts");
-		customerMenu[5] = new Menu("5", "Quit");
-		
-		employeeMenu = new Menu[4];
-		employeeMenu[0] = new Menu("0", "View Customer Account Information");
-		employeeMenu[1] = new Menu("1", "View Customer Personal Information");
-		employeeMenu[2] = new Menu("2", "Approve/Deny Open Applications", "IfApplications");
-		employeeMenu[3] = new Menu("3", "Quit");
-		
-		adminMenu = new Menu[7];
-		adminMenu[0] = new Menu("0", "View All Accounts");
-		adminMenu[1] = new Menu("1", "Withdraw from Account");
-		adminMenu[2] = new Menu("2", "Deposit to Account");
-		adminMenu[3] = new Menu("3", "Transfer Between Accounts");
-		adminMenu[4] = new Menu("4", "Approve/Deny Open Applications", "IfApplications");
-		adminMenu[5] = new Menu("5", "Cancel Account");
-		adminMenu[6] = new Menu("6", "Quit");
-		//logger.trace("Constructor() end.");
-	}
+//		System.setIn(input);
+//		System.setOut( new PrintStream(output));
+//		logger.trace("Constructor() start.");
+//		
+//		List<Account> allAccounts= null;
+//		allAccounts = AcDao.getAllAccounts();
+//		
+//		int nextAcc = 0;
+//		for(Account acc: allAccounts) {
+//			if(nextAcc < acc.getId()) {
+//				nextAcc = acc.getId();
+//			}
+//		}
+//		
+//		Account.nextId = nextAcc+1;
+//		List<Person> allUsers = new ArrayList<>();
+//
+//		allUsers = pDao.getAllPeople();
+//		int nextUser = 0;
+//		for(Person use: allUsers) {
+//			if(nextUser < use.getId()) {
+//				nextUser = use.getId();
+//			}
+//		}
+////		User.nextId = nextUser+1;
+////		
+//		
+//		System.out.print("NEXT U:" + Person.nextId + "\n");
+//		System.out.print("NEXT A:" + Account.nextId + "\n");
+//		System.out.print("NEXT AO:" + AccountOwner.nextId + "\n");
+//		//User bob = new User(13, "aUser", "aPassword", 20, UserType.ADMIN);
+//		//bob.getName();
+//		//allUsers.get(i).
+//		aScanner = new Scanner(System.in);
+//		loginMenu = new Menu[3];
+//		loginMenu[0] = new Menu("0", "Login");
+//		loginMenu[1] = new Menu("1", "Register");
+//		loginMenu[2] = new Menu("2", "Quit");
+//		
+//		customerMenu = new Menu[6];
+//		customerMenu[0] = new Menu("0", "Apply to open an account.");
+//		customerMenu[1] = new Menu("1", "Apply to open a join account.");
+//		customerMenu[2] = new Menu("2", "Withdraw from Account", "IfAccount");
+//		customerMenu[3] = new Menu("3", "Deposit to Account", "IfAccount");
+//		customerMenu[4] = new Menu("4", "Transfer between Accounts", "If2Accounts");
+//		customerMenu[5] = new Menu("5", "Quit");
+//		
+//		employeeMenu = new Menu[4];
+//		employeeMenu[0] = new Menu("0", "View Customer Account Information");
+//		employeeMenu[1] = new Menu("1", "View Customer Personal Information");
+//		employeeMenu[2] = new Menu("2", "Approve/Deny Open Applications", "IfApplications");
+//		employeeMenu[3] = new Menu("3", "Quit");
+//		
+//		adminMenu = new Menu[7];
+//		adminMenu[0] = new Menu("0", "View All Accounts");
+//		adminMenu[1] = new Menu("1", "Withdraw from Account");
+//		adminMenu[2] = new Menu("2", "Deposit to Account");
+//		adminMenu[3] = new Menu("3", "Transfer Between Accounts");
+//		adminMenu[4] = new Menu("4", "Approve/Deny Open Applications", "IfApplications");
+//		adminMenu[5] = new Menu("5", "Cancel Account");
+//		adminMenu[6] = new Menu("6", "Quit");
+//		//logger.trace("Constructor() end.");
+//	}
 	
 	/*
 	 * Setting up the program.
@@ -185,10 +186,10 @@ public class Main {
 				Person.nextId = use.getId();
 			}
 		}
-//		
 		
 		System.out.print("NEXT U:" + Person.nextId + "\n");
 		System.out.print("NEXT A:" + Account.nextId + "\n");
+		System.out.print("NEXT AO:" + AccountOwner.nextId + "\n");
 		//User bob = new User(13, "aUser", "aPassword", 20, UserType.ADMIN);
 		//bob.getName();
 		//allUsers.get(i).
@@ -238,6 +239,7 @@ public class Main {
 			case "Login":
 				int returned = 0;
 				if(loginScreen() > 0) {
+					System.out.println("Welcome user"+currentUser.getId()+ "pers"+ currentUser.getPersonID());
 					switch(typeOfUser) {
 					case CUSTOMER:
 						returned = custMenu();
@@ -316,12 +318,12 @@ public class Main {
 	 * Customers can apply to open an account.
 	 * Customer can apply for account with a starting balance.
 	 */
-	public void applyOpenAccount() {
+	public void applyOpenAccount() throws Exception {
 		//logger.info("Enter Apply Open Account.");
 		//System.out.print(custMenuChoicesText[0]);
 		//System.out.println("OPEN ACCOUNT1");
 		Account tempAcc = new Account();
-		List<AccountOwner> AO = new ArrayList<>();
+		//List<AccountOwner> AO = new ArrayList<>();
 		tempAcc.setAtype(AType.INDIVIDUAL);
 		tempAcc.setAstate(AState.PENDING);
 		tempAcc.setActive(true);
@@ -331,9 +333,8 @@ public class Main {
 		AccountOwner newAO = new AccountOwner();
 		//System.out.println("OPEN ACCOUNT2");
 		newAO.setAccountID(tempAcc.getId());
-		newAO.setPersonID(currentUser.getPersonID());
+		newAO.setPersonID(currentPerson.getId());
 		//System.out.println("OPEN ACCOUNT3");
-		AO.add(newAO);
 		String startingBalance="";
 		String theInput="";
 		while(startingBalance=="") {
@@ -345,7 +346,7 @@ public class Main {
 					startingBalance="Yes";
 					break;
 				}
-			}			
+			}	
 			for(String cur :DEFAULT_NO_NO) {
 				if(theInput.equalsIgnoreCase(cur)) {
 					startingBalance="No";
@@ -372,7 +373,8 @@ public class Main {
 			}
 			if(AcDao.insertAccount(tempAcc)!=null)
 			{
-				logger.info("User:" + currentUser.getId().toString() + " - Applied to open an account.");
+				AoDao.insertAO(newAO);
+				logger.info("User:" + currentPerson.getId().toString() + " - Applied to open an account.");
 				System.out.print("You have been added to the list of users who want to add new accounts.\n");
 				System.out.print("When an employee approves of your new account\nit will be added to your list of accounts.\n");
 				System.out.print("Thank you for applying for wanting to create a new account.\n");
@@ -397,22 +399,22 @@ public class Main {
 	public boolean applyOpenJointAccount() throws Exception {
 		//logger.info("Enter Apply Open Joint Account.");
 		String theInput;
-		System.out.print("Please type in the UserID of the person you want to open the account with.\n");
+		System.out.print("Please type in the PersonID of the person you want to open the account with.\n");
 		System.out.print("Input > ");
 		theInput = aScanner.nextLine();
 		logger.info("User:" + currentUser.getId().toString() + " - Applied to open a joint account with:" + theInput);
-		for(Username aUser:uDao.getAllUsernamesByType(UType.CUSTOMER)) {
+		for(Person aUser:pDao.getAllActivePeopleByType(UType.CUSTOMER)) {
 			if(theInput.equals(aUser.getId().toString())) {
-				System.out.print("USERID!"+aUser.getId());
+				System.out.print("PersonID!"+aUser.getId());
 				if(!aUser.getId().equals(currentUser.getId())){
-					List<Account> tempAccounts = AcDao.getAccountsByAccountIDs(AoDao.getAllAccountIDsByAOs(AoDao.getAllActiveAOsByPersonID(aUser.getPersonID())));
+					List<Account> tempAccounts = AcDao.getAccountsByAccountIDs(AoDao.getAllAccountIDsByAOs(AoDao.getAllActiveAOsByPersonID(aUser.getId())));
 					for(Account acc:tempAccounts) {
 						int auserAO = -1;
 						int currAO = -1;
 						List<AccountOwner> curAOs= AoDao.getAllActiveAOsByAccountID(acc.getId());
 						if(curAOs.size() > 1) {
 							for(int i = 0; i < curAOs.size();i++) {
-								if(curAOs.get(i).getPersonID().equals(aUser.getPersonID())) {
+								if(curAOs.get(i).getPersonID().equals(aUser.getId())) {
 									auserAO=i;
 								}
 								if(curAOs.get(i).getPersonID().equals(currentPerson.getId())) {
@@ -475,7 +477,7 @@ public class Main {
 			return AcDao.getAllAccounts();
 		}
 		else if (currentUser.getUType().equals(UType.CUSTOMER)) {
-			return AcDao.getAccountsByAccountIDs(AoDao.getAllAccountIDsByAOs(AoDao.getAllActiveAOsByPersonID(currentUser.getPersonID())));
+			return AcDao.getAccountsByAccountIDs(AoDao.getAllAccountIDsByAOs(AoDao.getAllActiveAOsByPersonID(currentPerson.getId())));
 		}
 		return null;
 	}

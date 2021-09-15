@@ -201,7 +201,7 @@ public class Bank {
 			lookup.put(extra.name, extra);
 		}
 		for(Method meth:methods) {
-			System.out.println(meth.getName());
+			//System.out.println(meth.getName());
 			for(Entry<String, Extractor> anEnt :lookup.entrySet()) {
 				if(meth.getName().equalsIgnoreCase(anEnt.getValue().getter)) {
 					anEnt.getValue().gMethod = meth;

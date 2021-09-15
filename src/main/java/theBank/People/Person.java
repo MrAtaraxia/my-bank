@@ -56,11 +56,11 @@ public class Person implements Serializable {
     	this.withdrawn=0.0d;
     }
 
-	public int getId() {
+	public Integer getId() {
 		return id;
 	}
 	
-	public boolean setId(int id) {
+	public Boolean setId(int id) {
 		if(id <=0) {
 			return false;
 		}
@@ -98,19 +98,19 @@ public class Person implements Serializable {
 	}
 
 
-	public double getWithdrawn() {
+	public Double getWithdrawn() {
 		return withdrawn;
 	}
 
-	public void setWithdrawn(double withdrawn) {
+	public void setWithdrawn(Double withdrawn) {
 		this.withdrawn = withdrawn;
 	}
 
-	public boolean getActive() {
+	public Boolean getActive() {
 		return active;
 	}
 
-	public void setActive(boolean active) {
+	public void setActive(Boolean active) {
 		this.active = active;
 	}
 

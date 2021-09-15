@@ -23,15 +23,19 @@ public class AccountOwner {
 	
 	public AccountOwner() {
 		setId(nextId);
+		setOtype(OType.APPROVED);
 	}
 	
 	public Integer getId() {
+		if(id >= nextId) {
+			nextId=id+1;
+		}
 		return id;
 	}
 	
 	public void setId(Integer id) {
 		if(id >= nextId) {
-			nextId=id;
+			nextId=id+1;
 		}
 		this.id = id;
 	}

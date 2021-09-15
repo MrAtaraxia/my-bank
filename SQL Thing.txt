@@ -1,0 +1,141 @@
+drop table if exists transactions;
+drop table if exists accountOwner;
+drop table if exists username;
+drop table if exists card;
+drop table if exists person;
+drop table if exists account;
+drop table if exists bank;
+drop table if exists address;
+
+drop table if exists address;
+CREATE TABLE if not exists address (
+id INTEGER auto_increment,
+active Bool not null default true,
+street varchar(50)  not null,
+state varchar(20) not null,
+zipcode varchar(5) not null check (zipcode REGEXP '^[0-9]{5}'),
+city varchar(50) not null,
+PRIMARY KEY (id)
+);
+alter table `address` add unique `addr_unique_index`(`street`,`state`,`zipcode`,`city`);
+
+
+drop table if exists bank;
+CREATE TABLE if not exists  bank (
+id INTEGER AUTO_INCREMENT,
+active bool default true,
+name VARCHAR(50) UNIQUE not null,
+routing VARCHAR(20) UNIQUE not null check (routing REGEXP '^[0-9]{9}'),
+totalFunds double not null check(totalFunds >= 0) default 0,
+addressID int not null,
+PRIMARY KEY (id),
+FOREIGN KEY (addressID) REFERENCES address(id)
+);
+
+
+drop table if exists account;
+CREATE TABLE if not exists  account(
+id INTEGER AUTO_INCREMENT,
+active bool not null default true,
+accountNumber INTEGER UNIQUE not null,
+bankID INTEGER not null,
+balance DOUBLE not null check(balance >= 0) not null,
+aState VARCHAR(20) not null,
+aType VARCHAR(20) not null,
+created datetime not null default current_timestamp,
+modified datetime not null default current_timestamp 
+					ON UPDATE current_timestamp,
+PRIMARY KEY (id),
+FOREIGN KEY (bankID) REFERENCES bank(id)
+);
+
+drop table if exists person;
+CREATE TABLE if not exists  person (
+id INTEGER AUTO_INCREMENT,
+active bool not null default true,
+fname VARCHAR(50) not null,
+lname VARCHAR(50) not null,
+email VARCHAR(50) not null check(email like '%@%'),
+withdrawn DOUBLE not null check(withdrawn >= 0) not null,
+addressID int not null,
+created datetime not null default current_timestamp,
+modified datetime not null default current_timestamp 
+					ON UPDATE current_timestamp,
+PRIMARY KEY (id),
+FOREIGN KEY (addressID) REFERENCES address(id)
+);
+
+drop table if exists card;
+CREATE TABLE if not exists card (
+id Integer auto_increment,
+active bool not null default true,
+personID integer not null,
+acountID integer not null,
+cardnumber VARCHAR(20) UNIQUE not null,
+cvv VARCHAR(5) not null,
+issued datetime not null default current_timestamp,
+expiresM int not null,
+expiresY int not null,
+PRIMARY KEY (id),
+FOREIGN KEY (personID) REFERENCES person(id),
+FOREIGN KEY (acountID) REFERENCES account(id)
+)
+
+CREATE TRIGGER card_expires
+BEFORE INSERT ON card
+    FOR EACH ROW SET NEW.expiresM = MONTH(NOW()) and NEW.expiresY = YEAR(NOW());
+
+
+
+drop table if exists username;
+CREATE TABLE if not exists  username (
+id INTEGER AUTO_INCREMENT,
+active bool not null default true,
+personID int not null,
+username VARCHAR(50) UNIQUE not null,
+pass VARCHAR(50) not null,
+utype VARCHAR(20) not null,
+created datetime not null default current_timestamp,
+modified datetime not null default current_timestamp 
+					ON UPDATE current_timestamp,
+PRIMARY KEY (id),
+FOREIGN KEY (personID) REFERENCES person(id)
+);
+
+drop table if exists accountOwner;
+CREATE TABLE if not exists accountOwner(
+id INTEGER AUTO_INCREMENT,
+active bool not null default true,
+accountID int not null,
+personID int not null,
+otype VARCHAR(50) not null,
+created DATETIME not null default current_timestamp,
+modified DATETIME not null default current_timestamp 
+					       ON UPDATE current_timestamp,
+PRIMARY KEY (id),
+FOREIGN KEY (accountID) REFERENCES account(id),
+FOREIGN KEY (personID) REFERENCES person(id)
+);
+
+drop table if exists transactions;
+CREATE TABLE if not exists transactions(
+id INTEGER AUTO_INCREMENT,
+accountLocalID int not null,
+routingLocalNum VARCHAR(20) not null,
+personID int not null,
+description VARCHAR(50) not null,
+addition DOUBLE check(addition >= 0) not null default 0,
+subtraction DOUBLE check(subtraction >= 0) not null default 0,
+balance DOUBLE not null,
+tState VARCHAR(30) not null,
+tType VARCHAR(30) not null,
+taxable bool not null default true,
+created DATETIME not null default current_timestamp,
+modified DATETIME not null default current_timestamp 
+					       ON UPDATE current_timestamp,
+PRIMARY KEY (id),
+FOREIGN KEY (accountLocalID) REFERENCES account(id),
+FOREIGN KEY (routingLocalNum) REFERENCES bank(routing),
+FOREIGN KEY (personID) REFERENCES person(id),
+CONSTRAINT CHK_accTansAmount CHECK ((addition>0 AND subtraction=0)OR(addition=0 AND subtraction>0)));
+

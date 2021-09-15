@@ -30,7 +30,6 @@ public class Account implements Serializable {
 	private Integer accountNumber;
 	private Integer bankID;
 	private Double balance = 0.0;
-	//private Integer[] owners;
 	private AState astate;
 	private AType atype;
 	private LocalDateTime created;
@@ -81,14 +80,6 @@ public class Account implements Serializable {
 		this.balance = balance;
 		return true;
 	}
-
-//	public Integer[] getOwners() {
-//		return owners;
-//	}
-//
-//	public void setOwners(Integer[] owners) {
-//		this.owners = owners;
-//	}
 
 
 	public AState getAstate() {

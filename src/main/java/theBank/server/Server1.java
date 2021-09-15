@@ -6,7 +6,7 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
-import theBank.*;
+
 
 public class Server1 {
     private ServerSocket serverSocket;
@@ -47,15 +47,15 @@ public class Server1 {
 				        out.println("bye");
 				        break;
 				    }
-					Main myMain = null;
+					//Main myMain = null;
 					try {
-						myMain = new Main(clientSocket.getInputStream(), clientSocket.getOutputStream());
+						//myMain = new Main(clientSocket.getInputStream(), clientSocket.getOutputStream());
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
 					
 					try {
-						myMain.run();
+						//myMain.run();
 					} catch (Exception e) {
 						e.printStackTrace();
 					}

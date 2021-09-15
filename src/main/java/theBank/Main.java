@@ -1,5 +1,6 @@
 package theBank;
 import java.io.IOException;
+import java.util.ArrayList;
 //import java.io.InputStream;
 //import java.io.OutputStream;
 //import java.io.PrintStream;
@@ -743,10 +744,10 @@ public class Main {
 	 */
 	public void viewCustAccInfo() throws Exception {
 		//logger.info("View Customer Account Info");
-		Username tempUser = null;
-		tempUser = getCustomer("Account Information");
+		 Person tempUser = getCustomer("Account Information");
 		List<Account> tempAccounts = null;
-		tempAccounts = AcDao.getAccountsByAccountIDs(AoDao.getAllAccountIDsByAOs(AoDao.getAllActiveAOsByPersonID(tempUser.getPersonID())));
+		tempAccounts = AcDao.getAccountsByAccountIDs(AoDao.getAllAccountIDsByAOs(AoDao.getAllActiveAOsByPersonID(tempUser.getId())));
+		System.out.println("Cust Accounts");
 		if (tempAccounts != null) {
 			System.out.print("User " + tempUser.getId() + " has active accounts:\n");
 			for(Account acc:tempAccounts) {
@@ -764,8 +765,9 @@ public class Main {
 	 */
 	public void viewCustPersonalInfo() throws Exception {
 		//logger.info("View Customer Personal Information");
-		Username tempUser = getCustomer("Personal Information");
-		Person tempPerson = pDao.getPerson(tempUser.getPersonID());
+		Person tempPerson = getCustomer("Personal Information");
+		Username tempUser = uDao.getUsernameByPersonID(tempPerson.getId());
+		//= pDao.getPerson(tempUser.getPersonID());
 		if(tempUser!=null) {
 			System.out.print("User " + tempUser.getId() + "\n");
 			System.out.print("First Name: " + tempPerson.getFname() + "\n");
@@ -1197,14 +1199,18 @@ public class Main {
 		}
 	}
 	
-	public Username getCustomer(String thing) throws Exception {
+	public Person getCustomer(String thing) throws Exception {
 		//logger.info("Get Customer");
-		List<Username> persons = uDao.getAllUsernamesByType(UType.CUSTOMER);
+		List<Username> users = uDao.getAllUsernamesByType(UType.CUSTOMER);
+		List<Person> persons = new ArrayList<>();
+		for(Username user:users) {
+			persons.add(pDao.getPerson(user.getPersonID()));
+		}
 		String myInput;
 		while(true) {
 			System.out.print("Please input the UserID of the user whose " + thing + " you would like to view.\n");
 			myInput = aScanner.nextLine();
-			for(Username use: persons) {
+			for(Person use: persons) {
 				if(myInput.equalsIgnoreCase(use.getId().toString())) {
 					return use;
 				}

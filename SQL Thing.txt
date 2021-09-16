@@ -1,3 +1,6 @@
+create database mybank;
+use mybank;
+
 drop table if exists transactions;
 drop table if exists accountOwner;
 drop table if exists username;

@@ -9,7 +9,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -22,20 +21,20 @@ import theBank.People.*;
 
 public abstract class BaseDAOImpl {
 	
-	protected Map<Integer, Object> getAllIt(String str, Object o,  Map<String, Extractor> aLookup) throws Exception {
+	protected List<Object> getAllIt(String str, Object o,  Map<String, Extractor> aLookup) throws Exception {
 		Connection connection = ConnectionSingle.getConn();
 	    try {
 	        Statement stmt = connection.createStatement();
 	        String query = "SELECT * FROM " + str;
 	        ResultSet rs = stmt.executeQuery(query);
-	        Map<Integer, Object> aMap = new HashMap<>();
+	        List<Object> aMap = new ArrayList<>();
 	        //System.out.println("Get all it");
 	        Object alocal = null;
 	        while(rs.next()) {
 	        	alocal = new Object();
 	        	alocal = extractItFromResultSet(rs, o, aLookup);
 	        	//System.out.println("ALOCAL" +alocal.toString());
-	            aMap.put((Integer) aLookup.get("id").gMethod.invoke(alocal), alocal);
+	            aMap.add(alocal);
 	            //System.out.println("yep");
 	            alocal = null;
 	            
@@ -45,7 +44,7 @@ public abstract class BaseDAOImpl {
 	    return null;
 	}
 	
-	protected Map<Integer, Object> getAllItWhereOld(String str, Object o,  Map<String, Extractor> aLookup, String where) throws Exception {
+	protected List<Object> getAllItWhereOld(String str, Object o,  Map<String, Extractor> aLookup, String where) throws Exception {
 		Connection connection = ConnectionSingle.getConn();
 		//System.out.println("Get all it WHERE");
 	    try {
@@ -54,14 +53,14 @@ public abstract class BaseDAOImpl {
 	        //System.out.println("before RS");
 	        ResultSet rs = stmt.executeQuery(query);
 	        //System.out.println("after RS");
-	        Map<Integer, Object> aMap = new HashMap<>();
+	        List<Object> aMap = new ArrayList<>();
 	        Object alocal = null;
 	        while(rs.next()) {
 	        	alocal = new Object();
 		        //System.out.println("before extract");
 	        	alocal = extractItFromResultSet(rs, o, aLookup);
 		        //System.out.println("after extract");
-	            aMap.put((Integer) aLookup.get("id").gMethod.invoke(alocal), alocal);
+	            aMap.add(alocal);
 	            
 	        }
 	        return aMap;
@@ -308,7 +307,7 @@ public abstract class BaseDAOImpl {
 		List<Object> myListV = new ArrayList<>();
 		myListT.add("id");
 		myListV.add(id);
-		for(var toActi: getAllItWherePS(str,o,aLookup,"id=?", myListV, myListT)) 
+		for(Object toActi: getAllItWherePS(str,o,aLookup,"id=?", myListV, myListT)) 
 		{ toActiCasted = o.getClass().cast(toActi); }
 		aLookup.get("active").sMethod.invoke(toActiCasted,true);
 		return updateIt(str, toActiCasted, aLookup);
@@ -320,7 +319,7 @@ public abstract class BaseDAOImpl {
 		List<Object> myListV = new ArrayList<>();
 		myListT.add("id");
 		myListV.add(id);
-		for(var toActi: getAllItWherePS(str,o,aLookup,"id=?", myListV, myListT)) 
+		for(Object toActi: getAllItWherePS(str,o,aLookup,"id=?", myListV, myListT)) 
 		{ toDeActiCasted = o.getClass().cast(toActi); }
 		aLookup.get("active").sMethod.invoke(toDeActiCasted,false);
 		return updateIt(str, toDeActiCasted, aLookup);

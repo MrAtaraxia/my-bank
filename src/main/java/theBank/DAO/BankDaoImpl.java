@@ -12,7 +12,7 @@ public class BankDaoImpl extends BaseDAOImpl implements BankDAO {
 		List<Object> myListV = new ArrayList<>();
 		myListT.add("id");
 		myListV.add(id);
-		for(var part:getAllItWherePS(
+		for(Object part:getAllItWherePS(
 				"Bank", new Bank(), Bank.lookup,"id = ?", myListV, myListT)) {
 			return (Bank) part;
 		}
@@ -25,7 +25,7 @@ public class BankDaoImpl extends BaseDAOImpl implements BankDAO {
 		List<Object> myListV = new ArrayList<>();
 		myListT.add("routing");
 		myListV.add(routing);
-		for(var part:getAllItWherePS(
+		for(Object part:getAllItWherePS(
 				"Bank", new Bank(), Bank.lookup,"routing=?", myListV, myListT)) {
 			return (Bank) part;
 		}
@@ -35,10 +35,10 @@ public class BankDaoImpl extends BaseDAOImpl implements BankDAO {
 	@Override
 	public List<Bank> getAllBanks() throws Exception {
 		List<Bank> toReturn = new ArrayList<>();
-		for(var part:getAllIt(
-				"Bank", new Bank(), Bank.lookup).entrySet()) {
+		for(Object part:getAllIt(
+				"Bank", new Bank(), Bank.lookup)) {
 			if(toReturn == null) { toReturn = new ArrayList<>(); }
-			toReturn.add((Bank) part.getValue());
+			toReturn.add((Bank) part);
 		}
 		return toReturn;
 	}
@@ -50,7 +50,7 @@ public class BankDaoImpl extends BaseDAOImpl implements BankDAO {
 		List<Object> myListV = new ArrayList<>();
 		myListT.add("active");
 		myListV.add(true);
-		for(var part:getAllItWherePS(
+		for(Object part:getAllItWherePS(
 				"Bank", new Bank(), Bank.lookup,"active=?", myListV, myListT)) {
 			if(toReturn==null) {
 				toReturn=new ArrayList<>();
@@ -69,7 +69,7 @@ public class BankDaoImpl extends BaseDAOImpl implements BankDAO {
 		myListV.add(true);
 		myListT.add("addressID");
 		myListV.add(addressID);
-		for(var part:getAllItWherePS(
+		for(Object part:getAllItWherePS(
 				"Bank", new Bank(), Bank.lookup,"active=? AND addressId=?", myListV, myListT)) {
 			if(toReturn==null) {
 				toReturn=new ArrayList<>();

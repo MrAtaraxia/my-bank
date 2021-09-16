@@ -16,7 +16,7 @@ public class TransactionDaoImpl extends BaseDAOImpl implements TransactionDAO {
 		List<Object> myListV = new ArrayList<>();
 		myListT.add("id");
 		myListV.add(id);
-		for(var part:getAllItWherePS(
+		for(Object part:getAllItWherePS(
 				"Transactions", new Transaction(), Transaction.lookup,"id = ?", myListV, myListT)) {
 			return (Transaction) part;
 		}
@@ -26,10 +26,10 @@ public class TransactionDaoImpl extends BaseDAOImpl implements TransactionDAO {
 	@Override
 	public List<Transaction> getAllTransactions() throws Exception {
 		List<Transaction> toReturn =  new ArrayList<>();
-		for(var part:getAllIt(
-				"Transactions", new Transaction(), Transaction.lookup).entrySet()) {
+		for(Object part:getAllIt(
+				"Transactions", new Transaction(), Transaction.lookup)) {
 			if(toReturn == null) { toReturn = new ArrayList<>(); }
-			toReturn.add((Transaction) part.getValue());
+			toReturn.add((Transaction) part);
 		}
 		return toReturn;
 	}
@@ -41,7 +41,7 @@ public class TransactionDaoImpl extends BaseDAOImpl implements TransactionDAO {
 		List<Object> myListV = new ArrayList<>();
 		myListT.add("personID");
 		myListV.add(PersonID);
-		for(var part:getAllItWherePS(
+		for(Object part:getAllItWherePS(
 				"Transactions", new Transaction(), Transaction.lookup,"PersonID=?", myListV, myListT)) {
 			if(toReturn==null) { toReturn=new ArrayList<>(); }
 			toReturn.add((Transaction) part);
@@ -57,7 +57,7 @@ public class TransactionDaoImpl extends BaseDAOImpl implements TransactionDAO {
 		List<Object> myListV = new ArrayList<>();
 		myListT.add("accountID");
 		myListV.add(AccountID);
-		for(var part:getAllItWherePS(
+		for(Object part:getAllItWherePS(
 				"Transactions", new Transaction(), Transaction.lookup,"AccountID=?", myListV, myListT)) {
 			if(toReturn==null) { toReturn=new ArrayList<>(); }
 			toReturn.add((Transaction) part);
@@ -72,7 +72,7 @@ public class TransactionDaoImpl extends BaseDAOImpl implements TransactionDAO {
 		List<Object> myListV = new ArrayList<>();
 		myListT.add("tState");
 		myListV.add(tstate);
-		for(var part:getAllItWherePS(
+		for(Object part:getAllItWherePS(
 				"Transactions", new Transaction(), Transaction.lookup,"TState=?", myListV, myListT)) {
 			if(toReturn==null) { toReturn=new ArrayList<>(); }
 			toReturn.add((Transaction) part);
@@ -87,7 +87,7 @@ public class TransactionDaoImpl extends BaseDAOImpl implements TransactionDAO {
 		List<Object> myListV = new ArrayList<>();
 		myListT.add("tType");
 		myListV.add(ttype);
-		for(var part:getAllItWherePS(
+		for(Object part:getAllItWherePS(
 				"Transactions", new Transaction(), Transaction.lookup,"TType=?", myListV, myListT)) {
 			if(toReturn==null) { toReturn=new ArrayList<>(); }
 			toReturn.add((Transaction) part);

@@ -15,7 +15,7 @@ public class AccountOwnerDaoImpl extends BaseDAOImpl implements AccountOwnerDao 
 		myListT.add("id");
 		myListV.add(id);
 		String toSearch="id=?";
-		for(var part:getAllItWherePS(
+		for(Object part:getAllItWherePS(
 				"AccountOwner", new AccountOwner(), AccountOwner.lookup,toSearch, myListV, myListT)) {
 			if(toReturn==null) {
 				toReturn=new ArrayList<>();
@@ -28,10 +28,10 @@ public class AccountOwnerDaoImpl extends BaseDAOImpl implements AccountOwnerDao 
 	@Override
 	public List<AccountOwner> getAllAOs() throws Exception {
 		List<AccountOwner> toReturn = new ArrayList<>();
-		for(var part:getAllIt(
-				"AccountOwner", new AccountOwner(), AccountOwner.lookup).entrySet()) {
+		for(Object part:getAllIt(
+				"AccountOwner", new AccountOwner(), AccountOwner.lookup)) {
 			if(toReturn == null) { toReturn = new ArrayList<>(); }
-			toReturn.add((AccountOwner) part.getValue());
+			toReturn.add((AccountOwner) part);
 		}
 		return toReturn;
 	}
@@ -44,7 +44,7 @@ public class AccountOwnerDaoImpl extends BaseDAOImpl implements AccountOwnerDao 
 		myListT.add("active");
 		myListV.add(true);
 		String toSearch="active=?";
-		for(var part:getAllItWherePS(
+		for(Object part:getAllItWherePS(
 				"AccountOwner", new AccountOwner(), AccountOwner.lookup,toSearch, myListV, myListT)) {
 			if(toReturn==null) {
 				toReturn=new ArrayList<>();
@@ -63,7 +63,7 @@ public class AccountOwnerDaoImpl extends BaseDAOImpl implements AccountOwnerDao 
 		myListT.add("personID");
 		myListV.add(personID);
 		String toSearch="personID=?";
-		for(var part:getAllItWherePS(
+		for(Object part:getAllItWherePS(
 				"AccountOwner", new AccountOwner(), AccountOwner.lookup,toSearch, myListV, myListT)) {
 			if(toReturn==null) {
 				toReturn=new ArrayList<>();
@@ -83,7 +83,7 @@ public class AccountOwnerDaoImpl extends BaseDAOImpl implements AccountOwnerDao 
 		myListT.add("personID");
 		myListV.add(personID);
 		String toSearch="active=? AND personID=?";
-		for(var part:getAllItWherePS(
+		for(Object part:getAllItWherePS(
 				"AccountOwner", new AccountOwner(), AccountOwner.lookup,toSearch, myListV, myListT)) {
 			if(toReturn==null) {
 				toReturn=new ArrayList<>();
@@ -101,7 +101,7 @@ public class AccountOwnerDaoImpl extends BaseDAOImpl implements AccountOwnerDao 
 		myListT.add("accountID");
 		myListV.add(AccountID);
 		String toSearch="accountID=?";
-		for(var part:getAllItWherePS(
+		for(Object part:getAllItWherePS(
 				"AccountOwner", new AccountOwner(), AccountOwner.lookup,toSearch, myListV, myListT)) {
 			if(toReturn==null) {
 				toReturn=new ArrayList<>();
@@ -124,7 +124,7 @@ public class AccountOwnerDaoImpl extends BaseDAOImpl implements AccountOwnerDao 
 		String toSearch="active=? AND accountID=?";
 		List<Object> mything= getAllItWherePS("AccountOwner", new AccountOwner(), AccountOwner.lookup,toSearch, myListV, myListT);
 		if(mything!=null) {
-			for(var part:mything) {
+			for(Object part:mything) {
 					if(toReturn==null) { toReturn=new ArrayList<>(); }
 				toReturn.add((AccountOwner) part);
 			}

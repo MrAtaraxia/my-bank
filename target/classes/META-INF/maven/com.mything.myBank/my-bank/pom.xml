@@ -12,6 +12,13 @@
 	    <version>3.12.4</version>
 	    <scope>test</scope>
 	</dependency>
+	<!-- https://mvnrepository.com/artifact/mysql/mysql-connector-java -->
+	<dependency>
+	    <groupId>mysql</groupId>
+	    <artifactId>mysql-connector-java</artifactId>
+	    <version>8.0.26</version>
+	</dependency>
+	
 	<!-- https://mvnrepository.com/artifact/com.oracle.database.jdbc/ojdbc10 -->
 	<dependency>
 	    <groupId>com.oracle.database.jdbc</groupId>

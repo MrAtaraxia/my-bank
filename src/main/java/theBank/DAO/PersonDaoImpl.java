@@ -17,7 +17,7 @@ public class PersonDaoImpl extends BaseDAOImpl implements PersonDao {
 		List<Object> myListV = new ArrayList<>();
 		myListT.add("id");
 		myListV.add(id);
-		for(var part:getAllItWherePS(
+		for(Object part:getAllItWherePS(
 				"Person", new Person(), Person.lookup,"id = ?", myListV, myListT)) {
 			return (Person) part;
 		}
@@ -27,10 +27,10 @@ public class PersonDaoImpl extends BaseDAOImpl implements PersonDao {
 	@Override
 	public List<Person> getAllPeople() throws Exception {
 		List<Person> toReturn = new ArrayList<>();
-		for(var part:getAllIt(
-				"Person", new Person(), Person.lookup).entrySet()) {
+		for(Object part:getAllIt(
+				"Person", new Person(), Person.lookup)) {
 			if(toReturn == null) { toReturn = new ArrayList<>(); }
-			toReturn.add((Person) part.getValue());
+			toReturn.add((Person) part);
 		}
 		return toReturn;
 	}
@@ -42,7 +42,7 @@ public class PersonDaoImpl extends BaseDAOImpl implements PersonDao {
 		List<Object> myListV = new ArrayList<>();
 		myListT.add("active");
 		myListV.add(true);
-		for(var part:getAllItWherePS(
+		for(Object part:getAllItWherePS(
 				"Person", new Person(), Person.lookup,"active=?", myListV, myListT)) {
 			if(toReturn==null) {
 				toReturn=new ArrayList<>();

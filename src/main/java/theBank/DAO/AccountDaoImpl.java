@@ -15,7 +15,7 @@ public class AccountDaoImpl extends BaseDAOImpl implements AccountDao {
 		List<Object> myListV = new ArrayList<>();
 		myListT.add("id");
 		myListV.add(id);
-		for(var part:getAllItWherePS(
+		for(Object part:getAllItWherePS(
 				"Account", new Account(), Account.lookup,"id = ?", myListV, myListT)) {
 			return (Account) part;
 		}
@@ -25,10 +25,10 @@ public class AccountDaoImpl extends BaseDAOImpl implements AccountDao {
 	@Override
 	public List<Account> getAllAccounts() throws Exception {
 		List<Account> toReturn =  new ArrayList<>();
-		for(var part:getAllIt(
-				"Account", new Account(), Account.lookup).entrySet()) {
+		for(Object part:getAllIt(
+				"Account", new Account(), Account.lookup)) {
 			if(toReturn == null) { toReturn = new ArrayList<>(); }
-			toReturn.add( (Account) part.getValue());
+			toReturn.add( (Account) part);
 		}
 		return toReturn;
 	}
@@ -40,7 +40,7 @@ public class AccountDaoImpl extends BaseDAOImpl implements AccountDao {
 		List<Object> myListV = new ArrayList<>();
 		myListT.add("active");
 		myListV.add(true);
-		for(var part:getAllItWherePS(
+		for(Object part:getAllItWherePS(
 				"Account", new Account(), Account.lookup,"active=?", myListV, myListT)) {
 			if(toReturn==null) {
 				toReturn=new ArrayList<>();
@@ -57,7 +57,7 @@ public class AccountDaoImpl extends BaseDAOImpl implements AccountDao {
 		List<Object> myListV = new ArrayList<>();
 		myListT.add("astate");
 		myListV.add(AState.PENDING);
-		for(var part:getAllItWherePS(
+		for(Object part:getAllItWherePS(
 				"Account", new Account(), Account.lookup,"astate=?", myListV, myListT)) {
 			if(toReturn==null) { toReturn=new ArrayList<>(); }
 			toReturn.add((Account) part);
@@ -72,7 +72,7 @@ public class AccountDaoImpl extends BaseDAOImpl implements AccountDao {
 		List<Object> myListV = new ArrayList<>();
 		myListT.add("astate");
 		myListV.add(astate);
-		for(var part:getAllItWherePS(
+		for(Object part:getAllItWherePS(
 				"Account", new Account(), Account.lookup,"astate=?", myListV, myListT)) {
 			if(toReturn==null) { toReturn=new ArrayList<>(); }
 			toReturn.add((Account) part);
@@ -89,7 +89,7 @@ public class AccountDaoImpl extends BaseDAOImpl implements AccountDao {
 		myListV.add(true);
 		myListT.add("astate");
 		myListV.add(astate);
-		for(var part:getAllItWherePS(
+		for(Object part:getAllItWherePS(
 				"Account", new Account(), Account.lookup,"active=? and astate=?", myListV, myListT)) {
 			if(toReturn==null) { toReturn=new ArrayList<>(); }
 			toReturn.add((Account) part);
@@ -104,7 +104,7 @@ public class AccountDaoImpl extends BaseDAOImpl implements AccountDao {
 		List<Object> myListV = new ArrayList<>();
 		myListT.add("atype");
 		myListV.add(atype);
-		for(var part:getAllItWherePS(
+		for(Object part:getAllItWherePS(
 				"Account", new Account(), Account.lookup,"atype=?", myListV, myListT)) {
 			if(toReturn==null) { toReturn=new ArrayList<>(); }
 			toReturn.add((Account) part);
@@ -121,7 +121,7 @@ public class AccountDaoImpl extends BaseDAOImpl implements AccountDao {
 		myListV.add(true);
 		myListT.add("atype");
 		myListV.add(atype);
-		for(var part:getAllItWherePS(
+		for(Object part:getAllItWherePS(
 				"Account", new Account(), Account.lookup,"active=? and atype=?", myListV, myListT)) {
 			if(toReturn==null) { toReturn=new ArrayList<>(); }
 			toReturn.add((Account) part);
